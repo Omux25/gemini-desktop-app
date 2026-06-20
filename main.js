@@ -1,10 +1,13 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
 let mainWindow;
+let geminiView;
 let settingsWindow;
 let tray = null;
+
+const TITLE_BAR_HEIGHT = 38;
 
 // Built-in settings manager
 const configPath = path.join(app.getPath('userData'), 'settings.json');
@@ -36,21 +39,49 @@ function createWindow() {
     width: 600,
     height: 800,
     icon: path.join(__dirname, 'icon.png'),
+    frame: false, // Frameless for custom title bar
+    backgroundColor: '#121212',
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
+    },
+    alwaysOnTop: currentSettings.alwaysOnTop,
+    resizable: !currentSettings.lockSize,
+    show: false
+  });
+
+  mainWindow.loadFile('index.html');
+
+  // Create WebContentsView for the external website
+  geminiView = new WebContentsView({
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true
-    },
-    autoHideMenuBar: true,
-    alwaysOnTop: currentSettings.alwaysOnTop,
-    resizable: !currentSettings.lockSize,
-    show: false // Don't show immediately
+    }
   });
 
-  mainWindow.loadURL('https://gemini.google.com');
+  mainWindow.contentView.addChildView(geminiView);
+  
+  function updateViewBounds() {
+    const bounds = mainWindow.getContentBounds();
+    geminiView.setBounds({ 
+      x: 0, 
+      y: TITLE_BAR_HEIGHT, 
+      width: bounds.width, 
+      height: bounds.height - TITLE_BAR_HEIGHT 
+    });
+  }
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.on('resize', updateViewBounds);
+  
+  mainWindow.once('ready-to-show', () => {
+    updateViewBounds();
     mainWindow.show();
+    mainWindow.webContents.send('settings-update', currentSettings);
   });
+
+  geminiView.webContents.loadURL('https://gemini.google.com');
 
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
@@ -150,10 +181,25 @@ ipcMain.handle('save-settings', (event, newSettings) => {
   currentSettings = newSettings;
   saveSettings(currentSettings);
   
-  // Apply changes instantly
   mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
   mainWindow.setResizable(!currentSettings.lockSize);
+  mainWindow.webContents.send('settings-update', currentSettings);
   registerHotkey(currentSettings.hotkey);
+});
+
+// IPC Listeners for Custom Title Bar
+ipcMain.on('window-control', (event, action) => {
+  if (action === 'hide') {
+    mainWindow.hide();
+  } else if (action === 'close') {
+    app.isQuiting = true;
+    app.quit();
+  } else if (action === 'pin') {
+    currentSettings.alwaysOnTop = !currentSettings.alwaysOnTop;
+    saveSettings(currentSettings);
+    mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
+    mainWindow.webContents.send('settings-update', currentSettings);
+  }
 });
 
 app.on('window-all-closed', function () {

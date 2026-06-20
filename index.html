@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; padding: 0; background-color: #121212; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .titlebar {
+            height: 38px;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-app-region: drag; /* Makes the title bar draggable */
+            border-bottom: 1px solid #333;
+            color: white;
+            user-select: none;
+        }
+        .titlebar-title {
+            padding-left: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .titlebar-icon {
+            width: 16px;
+            height: 16px;
+        }
+        .titlebar-controls {
+            display: flex;
+            -webkit-app-region: no-drag; /* Buttons must be clickable */
+            height: 100%;
+        }
+        .control-btn {
+            width: 46px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .control-btn:hover {
+            background-color: #333;
+        }
+        .control-btn.close:hover {
+            background-color: #e81123;
+        }
+        .control-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #ccc;
+        }
+        .control-btn.active svg {
+            fill: #4285f4; /* Highlight for pinned */
+        }
+    </style>
+</head>
+<body>
+    <div class="titlebar">
+        <div class="titlebar-title">
+            <img src="icon.png" class="titlebar-icon">
+            Gemini
+        </div>
+        <div class="titlebar-controls">
+            <!-- Pin Button -->
+            <div class="control-btn" id="pinBtn" title="Toggle Always on Top">
+                <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+            </div>
+            <!-- Hide Button -->
+            <div class="control-btn" id="hideBtn" title="Hide to Tray">
+                <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+            </div>
+            <!-- Close Button -->
+            <div class="control-btn close" id="closeBtn" title="Close App">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update pin button state
+        window.api.onSettingsUpdate((settings) => {
+            const pinBtn = document.getElementById('pinBtn');
+            if (settings.alwaysOnTop) {
+                pinBtn.classList.add('active');
+            } else {
+                pinBtn.classList.remove('active');
+            }
+        });
+
+        document.getElementById('pinBtn').addEventListener('click', () => {
+            window.api.togglePin();
+        });
+
+        document.getElementById('hideBtn').addEventListener('click', () => {
+            window.api.hideWindow();
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            window.api.closeApp();
+        });
+    </script>
+</body>
+</html>
