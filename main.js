@@ -52,6 +52,23 @@ function saveSettings(settings) {
 
 let currentSettings = getSettings();
 
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+  process.exit(0);
+}
+
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (commandLine.includes('--toggle')) {
+      toggleWindow();
+    } else {
+      if (!mainWindow.isVisible()) mainWindow.show();
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  }
+});
 function createWindow() {
   const initialSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
   mainWindow = new BrowserWindow({
@@ -182,6 +199,9 @@ if (currentSettings.hardwareAcceleration === false) {
 
 // Memory optimizations
 app.commandLine.appendSwitch('js-flags', '--expose_gc'); 
+
+// Spoof UserAgent to prevent Google from blocking logins
+app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 app.whenReady().then(() => {
   createWindow();

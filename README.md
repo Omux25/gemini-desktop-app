@@ -23,7 +23,25 @@ Download the latest version for your operating system from the **[Releases Page]
 
 - **Windows:** Download `Gemini-Desktop-Setup-x.x.x.exe`
 - **macOS:** Download `Gemini-Desktop-x.x.x-arm64.dmg`
-- **Linux:** Download `Gemini-Desktop-x.x.x.AppImage`
+- **Linux:** Download `gemini-desktop_x.x.x_amd64.deb` *(Recommended for icons & autostart)* or `Gemini-Desktop-x.x.x.AppImage`
+
+## 🐧 Linux Power Users (Wayland, Sway, i3, Hyprland)
+
+Wayland and Tiling Window Managers intentionally block applications from setting global hotkeys. To use the global hotkey feature, you can bind your Window Manager's hotkey to the `--toggle` command.
+
+1. Ensure Gemini Desktop is already running in the background.
+2. Add a keybind to your config file to execute `gemini-desktop --toggle`.
+
+**Example (Sway / i3):**
+```bash
+bindsym $mod+Space exec gemini-desktop --toggle
+```
+**Example (Hyprland):**
+```bash
+bind = $mainMod, SPACE, exec, gemini-desktop --toggle
+```
+
+*(Note: Tiling window managers may force the app to tile instead of floating on top. Configure window rules in your WM to force `gemini-desktop` to float for the best experience).*
 
 ## 🛠️ Building from Source
 
