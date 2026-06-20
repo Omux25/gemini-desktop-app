@@ -315,6 +315,11 @@ app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,Media
 // Native Wayland support for Linux (Fixes resizing bugs in tiling WMs)
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 
+// Hide from macOS Dock (skipTaskbar only works on Windows/Linux)
+if (process.platform === 'darwin' && app.dock) {
+  app.dock.hide();
+}
+
 app.whenReady().then(() => {
   // Explicitly grant microphone permissions to Gemini for voice input, and allow basic permissions for login
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
