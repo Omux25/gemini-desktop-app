@@ -46,5 +46,5 @@ This will output both the Portable `.exe` and the Setup `.exe` into the `dist/` 
 
 ## License
 
-This project is licensed under the **CC BY-NC 4.0** (Creative Commons Attribution-NonCommercial 4.0 International) License. 
-You are free to share and adapt the material for non-commercial purposes, but you may **not** use the material for commercial purposes.
+This project is licensed under the **MIT** License.
+You are completely free to use, modify, distribute, and build upon this code without restriction.
