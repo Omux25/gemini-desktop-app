@@ -191,11 +191,13 @@ function createWindow() {
   const enforceTopmost = () => {
     if (currentSettings.alwaysOnTop && mainWindow) {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true);
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
     }
   };
   mainWindow.on('focus', enforceTopmost);
+  mainWindow.on('blur', enforceTopmost);
   geminiView.webContents.on('focus', enforceTopmost);
+  geminiView.webContents.on('blur', enforceTopmost);
 
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
@@ -240,13 +242,16 @@ function toggleWindow() {
     if (mainWindow.isMinimized()) mainWindow.restore();
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
-    mainWindow.setAlwaysOnTop(true);
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
     mainWindow.show();
     mainWindow.focus();
     
     // If the user hasn't actually pinned it, immediately disable always on top after it surfaces
     if (!currentSettings.alwaysOnTop) {
       mainWindow.setAlwaysOnTop(false);
+    } else {
+      mainWindow.setAlwaysOnTop(false);
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
     }
   }
 }
@@ -355,7 +360,13 @@ ipcMain.handle('save-settings', (event, newSettings) => {
     mainWindow.setSize(newSize.width, newSize.height);
   }
   
-  mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
+  if (currentSettings.alwaysOnTop) {
+    mainWindow.setAlwaysOnTop(false);
+    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  } else {
+    mainWindow.setAlwaysOnTop(false);
+  }
+  
   mainWindow.setResizable(!currentSettings.lockSize);
   mainWindow.webContents.send('settings-update', currentSettings);
   registerHotkey(currentSettings.hotkey);
@@ -370,7 +381,12 @@ ipcMain.on('window-control', (event, action) => {
   } else if (action === 'pin') {
     currentSettings.alwaysOnTop = !currentSettings.alwaysOnTop;
     saveSettings(currentSettings);
-    mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
+    if (currentSettings.alwaysOnTop) {
+      mainWindow.setAlwaysOnTop(false);
+      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    } else {
+      mainWindow.setAlwaysOnTop(false);
+    }
     mainWindow.webContents.send('settings-update', currentSettings);
     if (settingsView) {
       settingsView.webContents.send('settings-update', currentSettings);
