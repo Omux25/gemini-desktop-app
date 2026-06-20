@@ -20,11 +20,29 @@
             padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            overflow: hidden;
+            gap: 16px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100vh;
         }
+        
+        /* Custom scrollbar for settings */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
         h2 {
-            margin: 0;
+            margin: 0 0 8px 0;
             font-weight: 600;
             font-size: 20px;
             color: #e0e0e0;
@@ -37,6 +55,16 @@
             padding: 16px;
             border-radius: 12px;
             border: 1px solid #333;
+        }
+        .setting-group-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background: #1e1e1e;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            gap: 12px;
         }
         .setting-info {
             display: flex;
@@ -51,12 +79,14 @@
             color: #888;
             margin-top: 4px;
         }
+        
         /* Toggle Switch */
         .switch {
             position: relative;
             display: inline-block;
             width: 44px;
             height: 24px;
+            flex-shrink: 0;
         }
         .switch input { 
             opacity: 0;
@@ -88,68 +118,99 @@
         input:checked + .slider:before {
             transform: translateX(20px);
         }
-        /* Select Input */
-        select {
-            background: #2a2a2a;
-            color: white;
-            border: 1px solid #444;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            outline: none;
-            cursor: pointer;
+
+        /* Pill Grid for Selections */
+        .pill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
         }
+        .pill {
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            color: #ccc;
+        }
+        .pill:hover {
+            background-color: #383838;
+            border-color: #555;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .pill:active {
+            transform: translateY(0);
+        }
+        .pill.active {
+            background-color: rgba(11, 87, 208, 0.15);
+            border-color: #0b57d0;
+            color: #669df6;
+            box-shadow: 0 0 10px rgba(11, 87, 208, 0.2);
+        }
+
         button {
             margin-top: 10px;
             background-color: #0b57d0;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 12px;
             font-size: 15px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 24px;
         }
         button:hover {
             background-color: #0a4ab3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
         }
     </style>
 </head>
 <body class="no-transition">
     <h2>Settings</h2>
 
-    <div class="setting-group">
+    <div class="setting-group-col">
         <div class="setting-info">
             <span class="setting-title">Global Hotkey</span>
-            <span class="setting-desc">Shortcut to show/hide the app</span>
+            <span class="setting-desc">Shortcut to quickly show/hide the app</span>
         </div>
-        <select id="hotkey">
-            <option value="Alt+Space">Alt + Space</option>
-            <option value="CommandOrControl+Space">Ctrl/Cmd + Space</option>
-            <option value="CommandOrControl+Shift+G">Ctrl/Cmd + Shift + G</option>
-            <option value="F12">F12</option>
-        </select>
+        <div class="pill-grid" id="hotkeyGrid">
+            <div class="pill" data-value="Alt+Space">Alt + Space</div>
+            <div class="pill" data-value="CommandOrControl+Space">Ctrl/Cmd + Space</div>
+            <div class="pill" data-value="CommandOrControl+Shift+G">Ctrl/Cmd + Shift + G</div>
+            <div class="pill" data-value="F12">F12</div>
+        </div>
     </div>
 
-    <div class="setting-group">
+    <div class="setting-group-col">
         <div class="setting-info">
             <span class="setting-title">Window Size</span>
             <span class="setting-desc">Choose a comfortable preset</span>
         </div>
-        <select id="windowSize">
-            <option value="Compact">Compact</option>
-            <option value="Standard">Standard</option>
-            <option value="Tall">Tall</option>
-            <option value="Large">Large</option>
-        </select>
+        <div class="pill-grid" id="windowSizeGrid">
+            <div class="pill" data-value="Compact">Compact</div>
+            <div class="pill" data-value="Standard">Standard</div>
+            <div class="pill" data-value="Tall">Tall</div>
+            <div class="pill" data-value="Large">Large</div>
+        </div>
     </div>
 
     <div class="setting-group">
         <div class="setting-info">
             <span class="setting-title">Always on Top</span>
-            <span class="setting-desc">Keep window above other apps</span>
+            <span class="setting-desc">Keep window floating above other apps</span>
         </div>
         <label class="switch">
             <input type="checkbox" id="alwaysOnTop">
@@ -160,7 +221,7 @@
     <div class="setting-group">
         <div class="setting-info">
             <span class="setting-title">Lock Window Size</span>
-            <span class="setting-desc">Prevent accidental resizing</span>
+            <span class="setting-desc">Prevent accidental manual resizing</span>
         </div>
         <label class="switch">
             <input type="checkbox" id="lockSize">
@@ -171,13 +232,57 @@
     <button id="saveBtn">Save & Apply</button>
 
     <script>
+        // State variables for pill grids
+        let selectedHotkey = 'Alt+Space';
+        let selectedWindowSize = 'Standard';
+
+        // Helper to setup pill grid interactions
+        function setupPillGrid(gridId, onSelect) {
+            const grid = document.getElementById(gridId);
+            const pills = grid.querySelectorAll('.pill');
+            
+            pills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    // Remove active from all
+                    pills.forEach(p => p.classList.remove('active'));
+                    // Add active to clicked
+                    pill.classList.add('active');
+                    // Call callback with value
+                    onSelect(pill.getAttribute('data-value'));
+                });
+            });
+        }
+
+        // Helper to set active pill by value
+        function setActivePill(gridId, value) {
+            const grid = document.getElementById(gridId);
+            const pills = grid.querySelectorAll('.pill');
+            pills.forEach(pill => {
+                if (pill.getAttribute('data-value') === value) {
+                    pill.classList.add('active');
+                } else {
+                    pill.classList.remove('active');
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             // Load current settings
             const settings = await window.settingsAPI.getSettings();
-            document.getElementById('hotkey').value = settings.hotkey || 'Alt+Space';
+            
+            selectedHotkey = settings.hotkey || 'Alt+Space';
+            selectedWindowSize = settings.windowSize || 'Standard';
+            
             document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
             document.getElementById('lockSize').checked = settings.lockSize ?? false;
-            document.getElementById('windowSize').value = settings.windowSize || 'Standard';
+
+            // Initialize pill grids
+            setupPillGrid('hotkeyGrid', (val) => { selectedHotkey = val; });
+            setupPillGrid('windowSizeGrid', (val) => { selectedWindowSize = val; });
+            
+            // Set initial active pills
+            setActivePill('hotkeyGrid', selectedHotkey);
+            setActivePill('windowSizeGrid', selectedWindowSize);
 
             // Remove no-transition class slightly after load to prevent toggle animation on open
             setTimeout(() => {
@@ -187,8 +292,8 @@
             // Save settings on button click
             document.getElementById('saveBtn').addEventListener('click', async () => {
                 const newSettings = {
-                    hotkey: document.getElementById('hotkey').value,
-                    windowSize: document.getElementById('windowSize').value,
+                    hotkey: selectedHotkey,
+                    windowSize: selectedWindowSize,
                     alwaysOnTop: document.getElementById('alwaysOnTop').checked,
                     lockSize: document.getElementById('lockSize').checked
                 };
