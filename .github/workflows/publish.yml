@@ -47,6 +47,12 @@ jobs:
           * **Smart Window Memory:** The app now silently tracks and remembers your exact X/Y screen coordinates. Whenever you launch or restore it, it respawns precisely where you last left it.
           * **Custom Offline Mode:** Built a sleek, native dark-mode "No Internet" UI that automatically intercepts network drops, preventing the app from crashing into a broken Chromium error page.
           * **UI Bug Fixes:** Completely rewrote the titlebar's CSS hover logic using a custom JavaScript engine to permanently fix a long-standing Chromium bug where buttons would get visually "stuck" when minimizing the app. 
+
+          ### 📥 Which file should I download?
+          * **Windows:** Download `Gemini-Desktop-Setup-$VERSION.exe` for a standard install, or `Portable.exe` if you want to run it without installing.
+          * **Mac (Apple Silicon):** Download `Gemini-Desktop-$VERSION-arm64.dmg`.
+          * **Ubuntu/Debian:** Download `gemini-desktop_$VERSION_amd64.deb` to install via your package manager.
+          * **Other Linux Distros:** Download the `.AppImage` to run it as a portable app.
           EOF
           
           NOTES=$(cat release_notes.md)
