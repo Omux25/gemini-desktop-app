@@ -51,6 +51,9 @@ Download the latest version for your operating system from the **[Releases Page]
 * **Linux (Ubuntu/Debian):** Download `gemini-desktop_amd64.deb` 
 * **Linux (Other):** Download `.AppImage`
 
+> [!NOTE]
+> **Windows Users:** Because this is a free, open-source project without a paid EV Code Signing Certificate, Microsoft Defender SmartScreen will initially flag the `.exe` as "unrecognized". To install the app, click **More info** -> **Run anyway**.
+
 ## 🐧 Linux Power Users (Wayland, Sway, i3, Hyprland)
 
 Wayland and Tiling Window Managers intentionally block applications from setting global hotkeys. To use the global hotkey feature, you can bind your Window Manager's hotkey to the `--toggle` command.
