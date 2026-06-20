@@ -162,14 +162,6 @@ function createWindow() {
     mainWindow.webContents.send('settings-update', currentSettings);
   });
 
-  // Aggressively enforce always-on-top when the window gains focus
-  mainWindow.on('focus', () => {
-    if (currentSettings.alwaysOnTop) {
-      // 'floating' level tells the OS to keep it above regular windows even if they demand focus
-      mainWindow.setAlwaysOnTop(true, 'floating');
-    }
-  });
-
   geminiView.webContents.loadURL('https://gemini.google.com');
 
   // Handle Offline Status
@@ -235,10 +227,15 @@ function toggleWindow() {
     mainWindow.hide();
   } else {
     if (mainWindow.isMinimized()) mainWindow.restore();
+    
+    // Windows force-focus hack: temporarily set to always on top to force it to the front
+    mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
-    if (currentSettings.alwaysOnTop) {
-      mainWindow.setAlwaysOnTop(true, 'floating');
+    
+    // If the user hasn't actually pinned it, immediately disable always on top after it surfaces
+    if (!currentSettings.alwaysOnTop) {
+      mainWindow.setAlwaysOnTop(false);
     }
   }
 }
@@ -362,11 +359,7 @@ ipcMain.on('window-control', (event, action) => {
   } else if (action === 'pin') {
     currentSettings.alwaysOnTop = !currentSettings.alwaysOnTop;
     saveSettings(currentSettings);
-    if (currentSettings.alwaysOnTop) {
-      mainWindow.setAlwaysOnTop(true, 'floating');
-    } else {
-      mainWindow.setAlwaysOnTop(false);
-    }
+    mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
     mainWindow.webContents.send('settings-update', currentSettings);
     if (settingsView) {
       settingsView.webContents.send('settings-update', currentSettings);
