@@ -71,6 +71,18 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
       if (!mainWindow.isVisible()) mainWindow.show();
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.focus();
+      
+      if (isSettingsOpen && settingsView) {
+        settingsView.webContents.focus();
+      } else if (geminiView) {
+        geminiView.webContents.focus();
+        geminiView.webContents.executeJavaScript(`
+          (function() {
+            var el = document.querySelector('rich-textarea, textarea, [contenteditable="true"]');
+            if (el) { el.focus(); }
+          })();
+        `).catch(()=>{});
+      }
     }
   }
 });
@@ -246,6 +258,19 @@ function toggleWindow() {
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
     mainWindow.show();
     mainWindow.focus();
+    
+    if (isSettingsOpen && settingsView) {
+      settingsView.webContents.focus();
+    } else if (geminiView) {
+      geminiView.webContents.focus();
+      // Forcefully focus the Gemini prompt input box
+      geminiView.webContents.executeJavaScript(`
+        (function() {
+          var el = document.querySelector('rich-textarea, textarea, [contenteditable="true"]');
+          if (el) { el.focus(); }
+        })();
+      `).catch(()=>{});
+    }
     
     // If the user hasn't actually pinned it, immediately disable always on top after it surfaces
     if (!currentSettings.alwaysOnTop) {
