@@ -250,16 +250,6 @@ app.commandLine.appendSwitch('js-flags', '--expose_gc');
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 
 app.whenReady().then(() => {
-  // Fix Google Auth by dynamically stripping Electron/App from the User-Agent,
-  // which ensures Sec-CH-UA headers perfectly match the User-Agent string.
-  const defaultUserAgent = session.defaultSession.getUserAgent();
-  const cleanUserAgent = defaultUserAgent
-    .replace(/gemini-desktop\/\S+\s*/g, '')
-    .replace(/Electron\/\S+\s*/g, '')
-    .trim();
-  session.defaultSession.setUserAgent(cleanUserAgent);
-  app.userAgentFallback = cleanUserAgent;
-
   // Explicitly grant microphone permissions to Gemini for voice input, and allow basic permissions for login
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
     const url = webContents.getURL();
