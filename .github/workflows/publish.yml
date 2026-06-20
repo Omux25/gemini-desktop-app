@@ -1,0 +1,59 @@
+name: Publish Release
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish.yml'
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Clean and Publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="1.2.0"
+          TAG="v1.2.0"
+          
+          gh api repos/${{ github.repository }}/releases > releases.json
+          
+          RELEASE_ID=$(jq -r ".[] | select(.tag_name==\"$TAG\") | .id" releases.json | head -n 1)
+          
+          if [ -z "$RELEASE_ID" ] || [ "$RELEASE_ID" == "null" ]; then
+            echo "Draft release $TAG not found."
+            exit 1
+          fi
+          
+          gh api repos/${{ github.repository }}/releases/$RELEASE_ID/assets > assets.json
+          jq -c '.[]' assets.json | while read asset; do
+            ID=$(echo $asset | jq -r '.id')
+            NAME=$(echo $asset | jq -r '.name')
+            if [[ "$NAME" == *.blockmap ]] || [[ "$NAME" == *.yml ]] || [[ "$NAME" == *.zip ]]; then
+              echo "Deleting $NAME ($ID)"
+              gh api -X DELETE repos/${{ github.repository }}/releases/assets/$ID || true
+            fi
+          done
+          
+          cat << 'EOF' > release_notes.md
+          Major update bringing native Microphone support, Window Memory, and a Custom Offline UI!
+
+          ### What's New
+          * **Microphone Permissions Engine:** Fully integrated native OS permission requests so you can seamlessly use Gemini's Voice-to-Text feature without being blocked.
+          * **Smart Window Memory:** The app now silently tracks and remembers your exact X/Y screen coordinates. Whenever you launch or restore it, it respawns precisely where you last left it.
+          * **Custom Offline Mode:** Built a sleek, native dark-mode "No Internet" UI that automatically intercepts network drops, preventing the app from crashing into a broken Chromium error page.
+          * **UI Bug Fixes:** Completely rewrote the titlebar's CSS hover logic using a custom JavaScript engine to permanently fix a long-standing Chromium bug where buttons would get visually "stuck" when minimizing the app. 
+          EOF
+          
+          NOTES=$(cat release_notes.md)
+          jq -n \
+            --arg name "Gemini Desktop v1.2.0 (Polish Update)" \
+            --arg body "$NOTES" \
+            --argjson draft false \
+            '{name: $name, body: $body, draft: $draft}' > patch.json
+            
+          gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID --input patch.json
