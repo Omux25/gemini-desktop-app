@@ -252,7 +252,7 @@ function toggleSettings() {
 }
 
 function toggleWindow() {
-  if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
+  if (mainWindow.isVisible() && !mainWindow.isMinimized() && mainWindow.isFocused()) {
     mainWindow.hide();
     if (geminiView) {
       geminiView.webContents.setBackgroundThrottling(true);
