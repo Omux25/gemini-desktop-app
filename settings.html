@@ -11,7 +11,7 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #121212;
+            background-color: rgba(18, 18, 18, 0.95);
             color: #ffffff;
             margin: 0;
             padding: 24px;
@@ -170,7 +170,7 @@
                     lockSize: document.getElementById('lockSize').checked
                 };
                 await window.settingsAPI.saveSettings(newSettings);
-                window.close(); // Close the settings window after saving
+                window.settingsAPI.closeSettings();
             });
         });
     </script>

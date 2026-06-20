@@ -4,7 +4,7 @@ const fs = require('fs');
 
 let mainWindow;
 let geminiView;
-let settingsWindow;
+let settingsView = null;
 let tray = null;
 
 const TITLE_BAR_HEIGHT = 38;
@@ -64,13 +64,20 @@ function createWindow() {
   mainWindow.contentView.addChildView(geminiView);
   
   function updateViewBounds() {
+    if (!mainWindow) return;
     const bounds = mainWindow.getContentBounds();
-    geminiView.setBounds({ 
+    const viewBounds = { 
       x: 0, 
       y: TITLE_BAR_HEIGHT, 
       width: bounds.width, 
       height: bounds.height - TITLE_BAR_HEIGHT 
-    });
+    };
+    if (geminiView) {
+        geminiView.setBounds(viewBounds);
+    }
+    if (settingsView) {
+        settingsView.setBounds(viewBounds);
+    }
   }
 
   mainWindow.on('resize', updateViewBounds);
@@ -91,32 +98,31 @@ function createWindow() {
   });
 }
 
-function createSettingsWindow() {
-  if (settingsWindow) {
-    settingsWindow.focus();
-    return;
+function toggleSettings() {
+  if (!settingsView) {
+    settingsView = new WebContentsView({
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: path.join(__dirname, 'settings_preload.js')
+      }
+    });
+    settingsView.setBackgroundColor('#00000000'); // Transparent background
+    settingsView.webContents.loadFile('settings.html');
+    mainWindow.contentView.addChildView(settingsView);
+    
+    // Resize immediately
+    const bounds = mainWindow.getContentBounds();
+    settingsView.setBounds({ 
+      x: 0, 
+      y: TITLE_BAR_HEIGHT, 
+      width: bounds.width, 
+      height: bounds.height - TITLE_BAR_HEIGHT 
+    });
+  } else {
+    mainWindow.contentView.removeChildView(settingsView);
+    settingsView = null;
   }
-
-  settingsWindow = new BrowserWindow({
-    width: 400,
-    height: 400,
-    title: 'Gemini Settings',
-    icon: path.join(__dirname, 'icon.png'),
-    resizable: false,
-    autoHideMenuBar: true,
-    alwaysOnTop: true,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'settings_preload.js')
-    }
-  });
-
-  settingsWindow.loadFile('settings.html');
-
-  settingsWindow.on('closed', () => {
-    settingsWindow = null;
-  });
 }
 
 function toggleWindow() {
@@ -155,7 +161,7 @@ app.whenReady().then(() => {
   tray = new Tray(path.join(__dirname, 'icon.png'));
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Show/Hide Gemini', click: toggleWindow },
-    { label: 'Settings', click: createSettingsWindow },
+    { label: 'Settings', click: toggleSettings },
     { type: 'separator' },
     { label: 'Quit', click: () => {
       app.isQuiting = true;
@@ -199,6 +205,10 @@ ipcMain.on('window-control', (event, action) => {
     saveSettings(currentSettings);
     mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
     mainWindow.webContents.send('settings-update', currentSettings);
+  } else if (action === 'settings') {
+    toggleSettings();
+  } else if (action === 'close-settings') {
+    if (settingsView) toggleSettings();
   }
 });
 
