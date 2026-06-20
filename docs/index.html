@@ -19,21 +19,26 @@
             </div>
             <h1>Gemini Desktop</h1>
             <p class="subtitle">Experience Google Gemini outside the browser. Native, fast, and packed with power user features.</p>
+            <div class="security-badge">
+                🔒 Direct, secure webview. No injected scripts. Your Google session stays strictly local.
+            </div>
             
             <div class="cta-container">
                 <a href="downloads.html" class="btn primary">Download Gemini Desktop</a>
                 <a href="https://ko-fi.com/omux25" target="_blank" class="btn secondary">☕ Support the Project</a>
             </div>
+            
+            <img src="mockup.png" class="mockup-img" alt="Gemini Desktop App Interface" style="display: none;" id="mockupImg">
         </header>
 
         <section class="features">
             <div class="feature-card">
                 <h3>Global Hotkey</h3>
-                <p>Instantly summon Gemini from any app using <code>Alt + Space</code> (or <code>Cmd + Opt + Space</code> on Mac).</p>
+                <p>Instantly summon Gemini from any app using <code>Alt + Space</code> (or <code>Cmd + Opt + Space</code> on Mac). It auto-focuses the prompt so you can start typing immediately.</p>
             </div>
             <div class="feature-card">
-                <h3>Smart Memory</h3>
-                <p>The app remembers your exact screen coordinates and custom window size every time you open it.</p>
+                <h3>Smart Memory <span style="font-size: 0.6em; background: rgba(0,122,255,0.2); color: #4da3ff; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 6px;">Optimized</span></h3>
+                <p>Built with an optimized Electron core. Uses background garbage collection to keep the RAM footprint light. Remembers your exact screen coordinates and custom window size.</p>
             </div>
             <div class="feature-card">
                 <h3>Native Voice</h3>
@@ -42,11 +47,25 @@
         </section>
         
         <footer>
-            <a href="https://github.com/Omux25/gemini-desktop-app" target="_blank" class="github-link">View Source on GitHub</a>
+            <a href="https://github.com/Omux25/gemini-desktop-app" target="_blank" class="github-link" id="githubLink">View Source on GitHub</a>
         </footer>
     </div>
 
     <script>
+        // Fetch latest version for footer
+        fetch('https://api.github.com/repos/Omux25/gemini-desktop-app/releases/latest')
+            .then(res => res.json())
+            .then(data => {
+                const link = document.getElementById('githubLink');
+                link.innerText = `${data.tag_name} • View Source on GitHub`;
+            }).catch(e => console.error(e));
+
+        // Check if mockup exists, if so display it
+        const mockup = document.getElementById('mockupImg');
+        const img = new Image();
+        img.onload = () => mockup.style.display = 'block';
+        img.src = 'mockup.png';
+
         // Simple subtle animation logic to make the blobs follow the mouse slightly
         document.addEventListener('mousemove', (e) => {
             const blobs = document.querySelectorAll('.blob');

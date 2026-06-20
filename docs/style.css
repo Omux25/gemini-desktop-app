@@ -131,7 +131,27 @@ h1 {
     display: flex;
     gap: 20px;
     justify-content: center;
-    margin-bottom: 70px;
+    margin-bottom: 40px;
+}
+
+.security-badge {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.mockup-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 50px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn {
@@ -210,13 +230,14 @@ h1 {
 }
 
 .feature-card code {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     padding: 3px 8px;
     border-radius: 6px;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.85em;
-    color: #007aff;
-    border: 1px solid rgba(255,255,255,0.05);
+    color: #4da3ff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-weight: 600;
 }
 
 footer {
