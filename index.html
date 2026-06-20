@@ -136,9 +136,19 @@
     </div>
 
     <script>
-        function removeHoverStates() {
+        function executeWithoutHover(action) {
+            // Drop any focus
+            if (document.activeElement) document.activeElement.blur();
+            
+            // Forcefully remove hover state
             document.body.style.pointerEvents = 'none';
-            setTimeout(() => { document.body.style.pointerEvents = 'auto'; }, 150);
+            
+            // Wait 30ms for Chromium to render the un-hovered state before freezing the window
+            setTimeout(() => {
+                action();
+                // Restore pointer events after the window is hidden
+                setTimeout(() => { document.body.style.pointerEvents = 'auto'; }, 100);
+            }, 30);
         }
 
         window.api.onSettingsUpdate((settings) => {
@@ -151,28 +161,23 @@
         });
 
         document.getElementById('backBtn').addEventListener('click', () => {
-            removeHoverStates();
             window.api.goBack();
         });
 
         document.getElementById('settingsBtn').addEventListener('click', () => {
-            removeHoverStates();
             window.api.toggleSettings();
         });
 
         document.getElementById('pinBtn').addEventListener('click', () => {
-            removeHoverStates();
             window.api.togglePin();
         });
 
         document.getElementById('hideBtn').addEventListener('click', () => {
-            removeHoverStates();
-            window.api.hideWindow();
+            executeWithoutHover(() => window.api.hideWindow());
         });
 
         document.getElementById('closeBtn').addEventListener('click', () => {
-            removeHoverStates();
-            window.api.closeApp();
+            executeWithoutHover(() => window.api.closeApp());
         });
     </script>
 </body>
