@@ -136,6 +136,11 @@
     </div>
 
     <script>
+        function removeHoverStates() {
+            document.body.style.pointerEvents = 'none';
+            setTimeout(() => { document.body.style.pointerEvents = 'auto'; }, 150);
+        }
+
         window.api.onSettingsUpdate((settings) => {
             const pinBtn = document.getElementById('pinBtn');
             if (settings.alwaysOnTop) {
@@ -146,22 +151,27 @@
         });
 
         document.getElementById('backBtn').addEventListener('click', () => {
+            removeHoverStates();
             window.api.goBack();
         });
 
         document.getElementById('settingsBtn').addEventListener('click', () => {
+            removeHoverStates();
             window.api.toggleSettings();
         });
 
         document.getElementById('pinBtn').addEventListener('click', () => {
+            removeHoverStates();
             window.api.togglePin();
         });
 
         document.getElementById('hideBtn').addEventListener('click', () => {
+            removeHoverStates();
             window.api.hideWindow();
         });
 
         document.getElementById('closeBtn').addEventListener('click', () => {
+            removeHoverStates();
             window.api.closeApp();
         });
     </script>
