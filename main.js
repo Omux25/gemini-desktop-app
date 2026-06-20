@@ -162,6 +162,14 @@ function createWindow() {
     mainWindow.webContents.send('settings-update', currentSettings);
   });
 
+  // Aggressively enforce always-on-top when the window gains focus
+  mainWindow.on('focus', () => {
+    if (currentSettings.alwaysOnTop) {
+      // 'floating' level tells the OS to keep it above regular windows even if they demand focus
+      mainWindow.setAlwaysOnTop(true, 'floating');
+    }
+  });
+
   geminiView.webContents.loadURL('https://gemini.google.com');
 
   // Handle Offline Status
@@ -230,7 +238,7 @@ function toggleWindow() {
     mainWindow.show();
     mainWindow.focus();
     if (currentSettings.alwaysOnTop) {
-      mainWindow.setAlwaysOnTop(true);
+      mainWindow.setAlwaysOnTop(true, 'floating');
     }
   }
 }
@@ -315,6 +323,7 @@ ipcMain.on('retry-connection', () => {
 });
 
 ipcMain.on('install-update', () => {
+  app.isQuiting = true;
   autoUpdater.quitAndInstall();
 });
 
@@ -353,7 +362,11 @@ ipcMain.on('window-control', (event, action) => {
   } else if (action === 'pin') {
     currentSettings.alwaysOnTop = !currentSettings.alwaysOnTop;
     saveSettings(currentSettings);
-    mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
+    if (currentSettings.alwaysOnTop) {
+      mainWindow.setAlwaysOnTop(true, 'floating');
+    } else {
+      mainWindow.setAlwaysOnTop(false);
+    }
     mainWindow.webContents.send('settings-update', currentSettings);
     if (settingsView) {
       settingsView.webContents.send('settings-update', currentSettings);

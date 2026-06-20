@@ -1,7 +1,7 @@
 {
   "name": "gemini-desktop",
   "productName": "Gemini Desktop",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "A native Windows desktop app for Google Gemini",
   "main": "main.js",
   "scripts": {
