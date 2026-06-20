@@ -6,5 +6,6 @@ contextBridge.exposeInMainWorld('api', {
     toggleSettings: () => ipcRenderer.send('window-control', 'settings'),
     hideWindow: () => ipcRenderer.send('window-control', 'hide'),
     closeApp: () => ipcRenderer.send('window-control', 'close'),
+    retryConnection: () => ipcRenderer.send('retry-connection'),
     onSettingsUpdate: (callback) => ipcRenderer.on('settings-update', (event, settings) => callback(settings))
 });
