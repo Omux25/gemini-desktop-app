@@ -305,6 +305,10 @@ app.whenReady().then(() => {
     }
   });
 
+  autoUpdater.on('download-progress', (progressObj) => {
+    if (settingsView) settingsView.webContents.send('update-progress', progressObj.percent);
+  });
+
   autoUpdater.on('update-downloaded', () => {
     if (mainWindow) mainWindow.webContents.send('update-downloaded');
   });

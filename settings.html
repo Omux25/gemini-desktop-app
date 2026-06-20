@@ -360,43 +360,54 @@
             // Updater UI Logic
             const checkUpdateBtn = document.getElementById('checkUpdateBtn');
             const updateStatusText = document.getElementById('updateStatusText');
+            let currentUpdateState = 'check'; // 'check', 'download', 'install'
 
             checkUpdateBtn.addEventListener('click', () => {
-                checkUpdateBtn.innerText = "Checking...";
-                checkUpdateBtn.disabled = true;
-                window.settingsAPI.checkForUpdates();
-                
-                // Fallback in case no event comes back quickly
-                setTimeout(() => {
-                    if (checkUpdateBtn.innerText === "Checking...") {
-                        checkUpdateBtn.innerText = "Check for Updates";
-                        checkUpdateBtn.disabled = false;
-                        updateStatusText.innerText = "You are up to date.";
-                    }
-                }, 3000);
+                if (currentUpdateState === 'check') {
+                    checkUpdateBtn.innerText = "Checking...";
+                    checkUpdateBtn.disabled = true;
+                    window.settingsAPI.checkForUpdates();
+                    
+                    // Fallback in case no event comes back quickly
+                    setTimeout(() => {
+                        if (currentUpdateState === 'check' && checkUpdateBtn.innerText === "Checking...") {
+                            checkUpdateBtn.innerText = "Check for Updates";
+                            checkUpdateBtn.disabled = false;
+                            updateStatusText.innerText = "You are up to date.";
+                        }
+                    }, 3000);
+                } else if (currentUpdateState === 'download') {
+                    checkUpdateBtn.innerText = "Downloading... (0%)";
+                    checkUpdateBtn.disabled = true;
+                    window.settingsAPI.downloadUpdate();
+                } else if (currentUpdateState === 'install') {
+                    window.settingsAPI.installUpdate();
+                }
             });
 
             if (window.settingsAPI.onUpdateAvailable) {
                 window.settingsAPI.onUpdateAvailable((version) => {
+                    currentUpdateState = 'download';
                     updateStatusText.innerText = `Version ${version} is available!`;
                     checkUpdateBtn.innerText = "Download Update";
                     checkUpdateBtn.disabled = false;
-                    checkUpdateBtn.onclick = () => {
-                        checkUpdateBtn.innerText = "Downloading...";
-                        checkUpdateBtn.disabled = true;
-                        window.settingsAPI.downloadUpdate();
-                    };
+                });
+            }
+
+            if (window.settingsAPI.onUpdateProgress) {
+                window.settingsAPI.onUpdateProgress((percent) => {
+                    if (currentUpdateState === 'download') {
+                        checkUpdateBtn.innerText = `Downloading... (${Math.round(percent)}%)`;
+                    }
                 });
             }
 
             if (window.settingsAPI.onUpdateDownloaded) {
                 window.settingsAPI.onUpdateDownloaded(() => {
+                    currentUpdateState = 'install';
                     updateStatusText.innerText = "Download complete.";
                     checkUpdateBtn.innerText = "Restart to Install";
                     checkUpdateBtn.disabled = false;
-                    checkUpdateBtn.onclick = () => {
-                        window.settingsAPI.installUpdate();
-                    };
                 });
             }
 

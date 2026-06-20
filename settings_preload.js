@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('settingsAPI', {
     checkForUpdates: () => ipcRenderer.send('check-for-updates-manual'),
     installUpdate: () => ipcRenderer.send('install-update'),
     onUpdateAvailable: (callback) => ipcRenderer.on('update-available', (event, version) => callback(version)),
+    onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, percent) => callback(percent)),
     onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback)
 });
