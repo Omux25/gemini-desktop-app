@@ -1,6 +1,10 @@
 name: Publish Release
 
 on:
+  workflow_run:
+    workflows: ["Build Cross-Platform Releases"]
+    types:
+      - completed
   push:
     paths:
       - '.github/workflows/publish.yml'
