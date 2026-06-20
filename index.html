@@ -64,7 +64,7 @@
             background: transparent;
         }
 
-        .control-btn:hover {
+        .control-btn.is-hovered {
             background-color: rgba(255, 255, 255, 0.08);
             transform: scale(1.05);
         }
@@ -73,7 +73,7 @@
             transform: scale(0.95);
         }
 
-        .control-btn.close:hover {
+        .control-btn.close.is-hovered {
             background-color: #e81123;
             color: white;
             box-shadow: 0 0 8px rgba(232, 17, 35, 0.5);
@@ -86,7 +86,7 @@
             transition: fill 0.2s;
         }
 
-        .control-btn:hover svg {
+        .control-btn.is-hovered svg {
             fill: #ffffff;
         }
 
@@ -101,7 +101,7 @@
         }
 
         /* Specifically adjust close button SVG */
-        .control-btn.close:hover svg {
+        .control-btn.close.is-hovered svg {
             fill: #ffffff;
         }
     </style>
@@ -136,20 +136,19 @@
     </div>
 
     <script>
-        function executeWithoutHover(action) {
-            // Drop any focus
-            if (document.activeElement) document.activeElement.blur();
-            
-            // Forcefully remove hover state
-            document.body.style.pointerEvents = 'none';
-            
-            // Wait 30ms for Chromium to render the un-hovered state before freezing the window
-            setTimeout(() => {
-                action();
-                // Restore pointer events after the window is hidden
-                setTimeout(() => { document.body.style.pointerEvents = 'auto'; }, 100);
-            }, 30);
-        }
+        // Bulletproof hover state management to fix Chromium stuck hover bugs
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => btn.classList.add('is-hovered'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('is-hovered'));
+            btn.addEventListener('click', () => btn.classList.remove('is-hovered'));
+        });
+
+        // Strip all hover states when window loses focus (e.g. Alt+Space hide)
+        window.addEventListener('blur', () => {
+            document.querySelectorAll('.control-btn.is-hovered').forEach(btn => {
+                btn.classList.remove('is-hovered');
+            });
+        });
 
         window.api.onSettingsUpdate((settings) => {
             const pinBtn = document.getElementById('pinBtn');
@@ -173,11 +172,11 @@
         });
 
         document.getElementById('hideBtn').addEventListener('click', () => {
-            executeWithoutHover(() => window.api.hideWindow());
+            window.api.hideWindow();
         });
 
         document.getElementById('closeBtn').addEventListener('click', () => {
-            executeWithoutHover(() => window.api.closeApp());
+            window.api.closeApp();
         });
     </script>
 </body>
