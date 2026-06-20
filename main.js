@@ -342,6 +342,8 @@ ipcMain.on('window-control', (event, action) => {
     toggleSettings();
   } else if (action === 'close-settings') {
     if (isSettingsOpen) toggleSettings();
+  } else if (action === 'refresh') {
+    if (geminiView) geminiView.webContents.reload();
   } else if (action === 'back') {
     if (isSettingsOpen) {
       toggleSettings(); // Close settings if open
