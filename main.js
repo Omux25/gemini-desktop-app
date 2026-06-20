@@ -280,10 +280,9 @@ ipcMain.handle('save-settings', (event, newSettings) => {
 // IPC Listeners for Custom Title Bar
 ipcMain.on('window-control', (event, action) => {
   if (action === 'hide') {
-    mainWindow.hide();
+    mainWindow.minimize();
   } else if (action === 'close') {
-    app.isQuiting = true;
-    app.quit();
+    mainWindow.hide();
   } else if (action === 'pin') {
     currentSettings.alwaysOnTop = !currentSettings.alwaysOnTop;
     saveSettings(currentSettings);
