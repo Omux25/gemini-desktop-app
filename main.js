@@ -250,12 +250,13 @@ app.commandLine.appendSwitch('js-flags', '--expose_gc');
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 
 // Spoof UserAgent to prevent Google from blocking logins
-app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
 app.whenReady().then(() => {
-  // Explicitly grant microphone permissions to Gemini for voice input
+  // Explicitly grant microphone permissions to Gemini for voice input, and allow basic permissions for login
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-    if (webContents.getURL().startsWith('https://gemini.google.com') && (permission === 'media' || permission === 'mediaAudio')) {
+    const url = webContents.getURL();
+    if (url.includes('google.com') || url.includes('google.co')) {
       callback(true);
     } else {
       callback(false);
