@@ -223,11 +223,15 @@ function toggleSettings() {
 }
 
 function toggleWindow() {
-  if (mainWindow.isVisible()) {
+  if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
     mainWindow.hide();
   } else {
+    if (mainWindow.isMinimized()) mainWindow.restore();
     mainWindow.show();
     mainWindow.focus();
+    if (currentSettings.alwaysOnTop) {
+      mainWindow.setAlwaysOnTop(true);
+    }
   }
 }
 
