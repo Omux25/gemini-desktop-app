@@ -336,6 +336,7 @@ app.whenReady().then(() => {
 
   autoUpdater.on('update-downloaded', () => {
     if (mainWindow) mainWindow.webContents.send('update-downloaded');
+    if (settingsView) settingsView.webContents.send('update-downloaded');
   });
 
   // Force garbage collection every 30 seconds when idle
