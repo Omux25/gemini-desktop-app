@@ -27,7 +27,7 @@ const WINDOW_SIZES = {
 // Built-in settings manager
 const configPath = path.join(app.getPath('userData'), 'settings.json');
 const defaultSettings = {
-  hotkey: 'Alt+Space',
+  hotkey: process.platform === 'darwin' ? 'Command+Option+Space' : 'Alt+Space',
   windowSize: 'Standard',
   alwaysOnTop: true,
   lockSize: false,
