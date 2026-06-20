@@ -409,6 +409,15 @@ ipcMain.handle('save-settings', (event, newSettings) => {
     mainWindow.setResizable(true); // Temporarily unlock to ensure size change
     const newSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
     mainWindow.setSize(newSize.width, newSize.height);
+    
+    // Fallback bounds update to prevent Electron rendering glitches when resizing while open
+    setTimeout(() => {
+      if (!mainWindow) return;
+      const bounds = mainWindow.getContentBounds();
+      const viewBounds = { x: 0, y: TITLE_BAR_HEIGHT, width: bounds.width, height: bounds.height - TITLE_BAR_HEIGHT };
+      if (geminiView) geminiView.setBounds(viewBounds);
+      if (settingsView && isSettingsOpen) settingsView.setBounds(viewBounds);
+    }, 50);
   }
   
   if (currentSettings.alwaysOnTop) {
