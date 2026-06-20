@@ -1,7 +1,7 @@
 {
   "name": "gemini-desktop",
   "productName": "Gemini Desktop",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A native Windows desktop app for Google Gemini",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,12 @@
   },
   "author": "Omux2 <omux2@example.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Omux25/gemini-desktop-app.git"
+  },
   "build": {
+    "publish": ["github"],
     "appId": "com.omux2.geminidesktop",
     "win": {
       "target": [
@@ -21,7 +26,10 @@
       "icon": "icon.png"
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "icon.png",
       "category": "public.app-category.productivity",
       "extendInfo": {
@@ -29,7 +37,10 @@
       }
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "icon.png",
       "category": "Utility"
     },
@@ -48,6 +59,7 @@
   },
   "dependencies": {
     "electron-context-menu": "^4.1.2",
-    "electron-store": "^11.0.2"
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.8.9"
   }
 }

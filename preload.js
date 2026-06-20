@@ -8,5 +8,8 @@ contextBridge.exposeInMainWorld('api', {
     hideWindow: () => ipcRenderer.send('window-control', 'hide'),
     closeApp: () => ipcRenderer.send('window-control', 'close'),
     retryConnection: () => ipcRenderer.send('retry-connection'),
-    onSettingsUpdate: (callback) => ipcRenderer.on('settings-update', (event, settings) => callback(settings))
+    onSettingsUpdate: (callback) => ipcRenderer.on('settings-update', (event, settings) => callback(settings)),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    installUpdate: () => ipcRenderer.send('install-update')
 });

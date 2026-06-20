@@ -37,7 +37,7 @@ jobs:
           jq -c '.[]' assets.json | while read asset; do
             ID=$(echo $asset | jq -r '.id')
             NAME=$(echo $asset | jq -r '.name')
-            if [[ "$NAME" == *.blockmap ]] || [[ "$NAME" == *.yml ]] || [[ "$NAME" == *.zip ]]; then
+            if [[ "$NAME" == *.blockmap ]] || [[ "$NAME" == *.zip ]]; then
               echo "Deleting $NAME ($ID)"
               gh api -X DELETE repos/${{ github.repository }}/releases/assets/$ID || true
             fi

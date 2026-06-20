@@ -1,6 +1,7 @@
 const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView, session, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { autoUpdater } = require('electron-updater');
 
 (async () => {
   const contextMenu = (await import('electron-context-menu')).default;
@@ -263,6 +264,17 @@ app.whenReady().then(() => {
   createWindow();
   registerHotkey(currentSettings.hotkey);
 
+  // Auto Updater Logic
+  autoUpdater.checkForUpdatesAndNotify();
+  
+  autoUpdater.on('update-available', () => {
+    if (mainWindow) mainWindow.webContents.send('update-available');
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    if (mainWindow) mainWindow.webContents.send('update-downloaded');
+  });
+
   // Force garbage collection every 30 seconds when idle
   setInterval(() => {
       if (!mainWindow.isVisible() && global.gc) {
@@ -296,6 +308,10 @@ ipcMain.on('retry-connection', () => {
   if (geminiView) {
     geminiView.webContents.loadURL('https://gemini.google.com');
   }
+});
+
+ipcMain.on('install-update', () => {
+  autoUpdater.quitAndInstall();
 });
 
 ipcMain.handle('get-settings', () => {

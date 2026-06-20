@@ -104,6 +104,43 @@
         .control-btn.close.is-hovered svg {
             fill: #ffffff;
         }
+
+        .update-banner {
+            height: 0;
+            background-color: rgba(66, 133, 244, 0.15);
+            color: #669df6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            overflow: hidden;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 0px solid rgba(102, 157, 246, 0.2);
+            gap: 12px;
+        }
+
+        .update-banner.visible {
+            height: 32px;
+            border-bottom-width: 1px;
+        }
+
+        .update-btn {
+            background: #669df6;
+            color: #131314;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .update-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +174,11 @@
                 <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             </div>
         </div>
+    </div>
+
+    <div class="update-banner" id="updateBanner">
+        <div class="update-text" id="updateText">Downloading update in background...</div>
+        <button class="update-btn" id="installUpdateBtn" style="display: none;">Install & Restart</button>
     </div>
 
     <script>
@@ -186,6 +228,22 @@
         document.getElementById('closeBtn').addEventListener('click', () => {
             window.api.closeApp();
         });
+
+        // Updater Logic
+        if (window.api.onUpdateAvailable) {
+            window.api.onUpdateAvailable(() => {
+                document.getElementById('updateBanner').classList.add('visible');
+            });
+            
+            window.api.onUpdateDownloaded(() => {
+                document.getElementById('updateText').innerText = "Update ready to install!";
+                document.getElementById('installUpdateBtn').style.display = "block";
+            });
+
+            document.getElementById('installUpdateBtn').addEventListener('click', () => {
+                window.api.installUpdate();
+            });
+        }
     </script>
 </body>
 </html>
