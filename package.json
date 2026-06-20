@@ -18,16 +18,16 @@
         "nsis",
         "portable"
       ],
-      "icon": "build/icon.png"
+      "icon": "icon.png"
     },
     "mac": {
       "target": ["dmg", "zip"],
-      "icon": "build/icon.png",
+      "icon": "icon.png",
       "category": "public.app-category.productivity"
     },
     "linux": {
       "target": ["AppImage", "deb"],
-      "icon": "build/icon.png",
+      "icon": "icon.png",
       "category": "Utility"
     },
     "nsis": {
