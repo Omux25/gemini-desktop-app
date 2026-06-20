@@ -254,17 +254,15 @@
         </label>
     </div>
 
-    <div class="setting-group-col">
-        <div class="setting-info" style="flex-direction: row; justify-content: space-between; align-items: center; width: 100%;">
-            <div>
-                <span class="setting-title">Software Updates</span>
-                <span class="setting-desc" id="updateStatusText">Check for new versions of Gemini Desktop</span>
-            </div>
-            <button id="checkUpdateBtn" style="margin: 0; padding: 8px 16px; border-radius: 6px; font-size: 13px;">Check for Updates</button>
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Software Updates</span>
+            <span class="setting-desc" id="updateStatusText">Check for new versions of Gemini Desktop</span>
         </div>
+        <button id="checkUpdateBtn" style="margin: 0 0 0 16px; padding: 8px 16px; border-radius: 6px; font-size: 13px; flex-shrink: 0;">Check for Updates</button>
     </div>
 
-    <button id="saveBtn">Done</button>
+    <button id="saveBtn" style="margin-bottom: 40px; margin-top: 16px;">Done</button>
 
     <script>
         // State variables for pill grids
