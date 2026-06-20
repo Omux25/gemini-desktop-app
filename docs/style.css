@@ -263,15 +263,29 @@ footer {
 }
 
 .github-link {
-    color: var(--text-secondary);
+    display: inline-block;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 12px 24px;
+    border-radius: 100px;
     text-decoration: none;
     font-size: 0.95rem;
-    transition: color 0.2s ease;
-    font-weight: 500;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    margin-top: 20px;
+}
+
+.github-link i {
+    margin-right: 8px;
+    font-size: 1.1rem;
 }
 
 .github-link:hover {
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive */

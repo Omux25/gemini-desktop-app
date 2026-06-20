@@ -6,6 +6,7 @@
     <meta name="description" content="Gemini Desktop - A premium, native desktop wrapper for Google Gemini with global hotkeys and custom features.">
     <title>Gemini Desktop - Native App</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,8 +48,10 @@
         </section>
         
         <footer>
-            <a href="https://github.com/Omux25/gemini-desktop-app" target="_blank" class="github-link" id="githubLink">View Source on GitHub</a>
-        </footer>
+        <div style="margin-top: 32px;">
+            <a href="https://github.com/Omux25/gemini-desktop-app" target="_blank" class="github-link" id="githubLink"><i class="fa-brands fa-github"></i> View Source on GitHub</a>
+        </div>
+    </footer>
     </div>
 
     <script>
@@ -57,7 +60,7 @@
             .then(res => res.json())
             .then(data => {
                 const link = document.getElementById('githubLink');
-                link.innerText = `${data.tag_name} • View Source on GitHub`;
+                link.innerHTML = `<i class="fa-brands fa-github"></i> ${data.tag_name} • View Source on GitHub`;
             }).catch(e => console.error(e));
 
         // Check if mockup exists, if so display it
