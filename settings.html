@@ -9,6 +9,9 @@
         * {
             box-sizing: border-box;
         }
+        .no-transition * {
+            transition: none !important;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: rgba(18, 18, 18, 0.95);
@@ -114,7 +117,7 @@
         }
     </style>
 </head>
-<body>
+<body class="no-transition">
     <h2>Settings</h2>
 
     <div class="setting-group">
@@ -127,6 +130,19 @@
             <option value="CommandOrControl+Space">Ctrl/Cmd + Space</option>
             <option value="CommandOrControl+Shift+G">Ctrl/Cmd + Shift + G</option>
             <option value="F12">F12</option>
+        </select>
+    </div>
+
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Window Size</span>
+            <span class="setting-desc">Choose a comfortable preset</span>
+        </div>
+        <select id="windowSize">
+            <option value="Compact">Compact</option>
+            <option value="Standard">Standard</option>
+            <option value="Tall">Tall</option>
+            <option value="Large">Large</option>
         </select>
     </div>
 
@@ -161,11 +177,18 @@
             document.getElementById('hotkey').value = settings.hotkey || 'Alt+Space';
             document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
             document.getElementById('lockSize').checked = settings.lockSize ?? false;
+            document.getElementById('windowSize').value = settings.windowSize || 'Standard';
+
+            // Remove no-transition class slightly after load to prevent toggle animation on open
+            setTimeout(() => {
+                document.body.classList.remove('no-transition');
+            }, 50);
 
             // Save settings on button click
             document.getElementById('saveBtn').addEventListener('click', async () => {
                 const newSettings = {
                     hotkey: document.getElementById('hotkey').value,
+                    windowSize: document.getElementById('windowSize').value,
                     alwaysOnTop: document.getElementById('alwaysOnTop').checked,
                     lockSize: document.getElementById('lockSize').checked
                 };

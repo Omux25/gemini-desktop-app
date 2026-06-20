@@ -9,10 +9,18 @@ let tray = null;
 
 const TITLE_BAR_HEIGHT = 38;
 
+const WINDOW_SIZES = {
+  Compact: { width: 400, height: 600 },
+  Standard: { width: 600, height: 800 },
+  Tall: { width: 600, height: 1000 },
+  Large: { width: 800, height: 1000 }
+};
+
 // Built-in settings manager
 const configPath = path.join(app.getPath('userData'), 'settings.json');
 const defaultSettings = {
   hotkey: 'Alt+Space',
+  windowSize: 'Standard',
   alwaysOnTop: true,
   lockSize: false
 };
@@ -35,9 +43,10 @@ function saveSettings(settings) {
 let currentSettings = getSettings();
 
 function createWindow() {
+  const initialSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
   mainWindow = new BrowserWindow({
-    width: 600,
-    height: 800,
+    width: initialSize.width,
+    height: initialSize.height,
     icon: path.join(__dirname, 'icon.png'),
     frame: false, // Frameless for custom title bar
     backgroundColor: '#121212',
@@ -186,6 +195,10 @@ ipcMain.handle('get-settings', () => {
 ipcMain.handle('save-settings', (event, newSettings) => {
   currentSettings = newSettings;
   saveSettings(currentSettings);
+  
+  mainWindow.setResizable(true); // Temporarily unlock to ensure size change
+  const newSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
+  mainWindow.setSize(newSize.width, newSize.height);
   
   mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
   mainWindow.setResizable(!currentSettings.lockSize);
