@@ -1,29 +1,55 @@
-# Gemini Desktop
+<div align="center">
+  <img src="./splash.png" alt="Gemini Desktop Banner" width="100%" />
 
-![Gemini Desktop Banner](./splash.png)
+  <h1>Gemini Desktop</h1>
 
-A premium, highly optimized cross-platform desktop wrapper for Google Gemini, built using Electron. This application brings Gemini out of your browser tabs and turns it into a native, powerful desktop assistant for Windows, macOS, and Linux.
+  <p><strong>A premium, highly optimized cross-platform desktop wrapper for Google Gemini.</strong></p>
+
+  <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Omux25/gemini-desktop-app?style=for-the-badge&color=007AFF&label=Latest%20Release" alt="Latest Release" />
+  </a>
+  <a href="https://github.com/Omux25/gemini-desktop-app/releases">
+    <img src="https://img.shields.io/github/downloads/Omux25/gemini-desktop-app/total?style=for-the-badge&color=28A745" alt="Downloads" />
+  </a>
+  <br>
+  <br>
+  <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest">
+    <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows" />
+  </a>
+  <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest">
+    <img src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS" />
+  </a>
+  <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest">
+    <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux" />
+  </a>
+</div>
+
+<br>
+
+This application brings Google Gemini out of your browser tabs and turns it into a native, powerful desktop assistant for Windows, macOS, and Linux. Built with Electron, optimized for extreme performance, and packed with features.
 
 ## ✨ Features
 
 - **Global Hotkey:** Instantly summon or hide the chat window from anywhere without interrupting your workflow.
   - Windows / Linux: `Alt + Space`
   - macOS: `Command + Option + Space`
+- **Native Microphone Support:** Securely handles native OS microphone permission requests so you can seamlessly use Voice-to-Text.
+- **Smart Window Memory:** Automatically tracks and remembers your exact window position (X/Y coordinates) so the app respawns right where you left it.
 - **Always on Top:** Pin the window so you can easily reference Gemini while gaming, coding, or working.
 - **Custom Window Sizes:** Switch between Compact, Standard, Tall, and Large presets to perfectly fit your screen.
+- **Custom Offline Mode:** A sleek, native "No Internet" UI that intercepts drops and prevents Chromium crash screens.
 - **System Tray Integration:** Runs quietly in the background without cluttering your taskbar.
-- **Launch on Startup:** Automatically boots silently in the background when you log in, ensuring your hotkey is always ready.
 - **Hardware Acceleration Toggle:** Choose between Buttery Smooth GPU rendering or Extreme Battery/RAM Saver mode.
 - **Memory Optimized:** Automatically throttles resources and forces garbage collection when hidden to save RAM.
-- **Secure External Links:** Clicking external links (like Wikipedia) safely opens your default web browser instead of hijacking the app.
 
-## 📥 Installation
+## 📥 Download & Install
 
 Download the latest version for your operating system from the **[Releases Page](https://github.com/Omux25/gemini-desktop-app/releases)**.
 
-- **Windows:** Download `Gemini-Desktop-Setup-x.x.x.exe`
-- **macOS:** Download `Gemini-Desktop-x.x.x-arm64.dmg`
-- **Linux:** Download `gemini-desktop_x.x.x_amd64.deb` *(Recommended for icons & autostart)* or `Gemini-Desktop-x.x.x.AppImage`
+* **Windows:** Download `Gemini-Desktop-Setup.exe` (or `Portable.exe`)
+* **macOS (Apple Silicon):** Download `Gemini-Desktop-arm64.dmg`
+* **Linux (Ubuntu/Debian):** Download `gemini-desktop_amd64.deb` 
+* **Linux (Other):** Download `.AppImage`
 
 ## 🐧 Linux Power Users (Wayland, Sway, i3, Hyprland)
 
@@ -41,7 +67,7 @@ bindsym $mod+Space exec gemini-desktop --toggle
 bind = $mainMod, SPACE, exec, gemini-desktop --toggle
 ```
 
-*(Note: Tiling window managers may force the app to tile instead of floating on top. Configure window rules in your WM to force `gemini-desktop` to float for the best experience).*
+*(Note: We have natively patched Wayland resizing bugs by injecting `ozone-platform-hint=auto` into the core).*
 
 ## 🛠️ Building from Source
 
