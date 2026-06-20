@@ -10,7 +10,7 @@
     "dist": "electron-builder"
   },
   "author": "Omux2",
-  "license": "GPL-3.0-or-later",
+  "license": "CC-BY-NC-4.0",
   "build": {
     "appId": "com.omux2.geminidesktop",
     "win": {

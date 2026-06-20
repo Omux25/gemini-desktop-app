@@ -109,6 +109,20 @@ function createWindow() {
 
   geminiView.webContents.loadURL('https://gemini.google.com');
 
+  // Security: Prevent external links from hijacking the wrapper
+  geminiView.webContents.setWindowOpenHandler(({ url }) => {
+    require('electron').shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  geminiView.webContents.on('will-navigate', (event, url) => {
+    // Only allow navigation to google domains (for auth and gemini)
+    if (!url.includes('google.com') && !url.includes('google.co')) {
+      event.preventDefault();
+      require('electron').shell.openExternal(url);
+    }
+  });
+
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
