@@ -73,6 +73,7 @@ function createSettingsWindow() {
     icon: path.join(__dirname, 'icon.png'),
     resizable: false,
     autoHideMenuBar: true,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
