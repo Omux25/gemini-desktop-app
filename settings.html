@@ -229,12 +229,22 @@
         </label>
     </div>
 
-    <button id="saveBtn">Save & Apply</button>
+    <button id="saveBtn">Done</button>
 
     <script>
         // State variables for pill grids
         let selectedHotkey = 'Alt+Space';
         let selectedWindowSize = 'Standard';
+
+        async function autoSaveSettings() {
+            const newSettings = {
+                hotkey: selectedHotkey,
+                windowSize: selectedWindowSize,
+                alwaysOnTop: document.getElementById('alwaysOnTop').checked,
+                lockSize: document.getElementById('lockSize').checked
+            };
+            await window.settingsAPI.saveSettings(newSettings);
+        }
 
         // Helper to setup pill grid interactions
         function setupPillGrid(gridId, onSelect) {
@@ -249,6 +259,7 @@
                     pill.classList.add('active');
                     // Call callback with value
                     onSelect(pill.getAttribute('data-value'));
+                    autoSaveSettings(); // Auto-save on pill click
                 });
             });
         }
@@ -276,6 +287,10 @@
             document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
             document.getElementById('lockSize').checked = settings.lockSize ?? false;
 
+            // Auto-save on switch toggles
+            document.getElementById('alwaysOnTop').addEventListener('change', autoSaveSettings);
+            document.getElementById('lockSize').addEventListener('change', autoSaveSettings);
+
             // Initialize pill grids
             setupPillGrid('hotkeyGrid', (val) => { selectedHotkey = val; });
             setupPillGrid('windowSizeGrid', (val) => { selectedWindowSize = val; });
@@ -289,15 +304,8 @@
                 document.body.classList.remove('no-transition');
             }, 50);
 
-            // Save settings on button click
-            document.getElementById('saveBtn').addEventListener('click', async () => {
-                const newSettings = {
-                    hotkey: selectedHotkey,
-                    windowSize: selectedWindowSize,
-                    alwaysOnTop: document.getElementById('alwaysOnTop').checked,
-                    lockSize: document.getElementById('lockSize').checked
-                };
-                await window.settingsAPI.saveSettings(newSettings);
+            // Just close settings on button click (settings are now auto-saved)
+            document.getElementById('saveBtn').addEventListener('click', () => {
                 window.settingsAPI.closeSettings();
             });
         });
