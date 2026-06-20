@@ -204,7 +204,8 @@ function createWindow() {
   const enforceTopmost = () => {
     if (currentSettings.alwaysOnTop && mainWindow) {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+      const topmostLevel = process.platform === 'win32' ? 'pop-up-menu' : 'floating';
+      mainWindow.setAlwaysOnTop(true, topmostLevel);
     }
   };
   mainWindow.on('focus', enforceTopmost);
@@ -265,7 +266,7 @@ function toggleWindow() {
     }
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
-    mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+    mainWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'pop-up-menu' : 'floating');
     mainWindow.show();
     mainWindow.focus();
     
@@ -287,7 +288,8 @@ function toggleWindow() {
       mainWindow.setAlwaysOnTop(false);
     } else {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+      const topmostLevel = process.platform === 'win32' ? 'pop-up-menu' : 'floating';
+      mainWindow.setAlwaysOnTop(true, topmostLevel);
     }
   }
 }
@@ -436,7 +438,7 @@ ipcMain.handle('save-settings', (event, newSettings) => {
   
   if (currentSettings.alwaysOnTop) {
     mainWindow.setAlwaysOnTop(false);
-    mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+    mainWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'pop-up-menu' : 'floating');
   } else {
     mainWindow.setAlwaysOnTop(false);
   }
@@ -457,7 +459,7 @@ ipcMain.on('window-control', (event, action) => {
     saveSettings(currentSettings);
     if (currentSettings.alwaysOnTop) {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'pop-up-menu');
+      mainWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'pop-up-menu' : 'floating');
     } else {
       mainWindow.setAlwaysOnTop(false);
     }
