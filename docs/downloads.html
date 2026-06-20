@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Download Gemini Desktop for Windows, Mac, and Linux.">
+    <title>Download - Gemini Desktop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .downloads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .dl-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid var(--glass-border);
+            padding: 40px 30px;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dl-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 122, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 122, 255, 0.2);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
+        }
+
+        .dl-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .dl-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .dl-card p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .dl-btn {
+            width: 100%;
+            text-align: center;
+            padding: 14px 0;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .dl-btn.windows {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+        }
+
+        .dl-btn.windows:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .dl-btn.source {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dl-btn.source:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .version-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 15px;
+            opacity: 0.7;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="icon.png" alt="Gemini Desktop Logo" width="56" height="56" style="border-radius: 12px;">
+            </div>
+            <h1>Download Gemini</h1>
+            <p class="subtitle" id="versionSubtitle">Fetching latest version...</p>
+        </header>
+
+        <div class="downloads-grid">
+            <div class="dl-card">
+                <div class="dl-icon">🪟</div>
+                <h3>Windows</h3>
+                <p>Native setup executable for Windows 10 & 11.</p>
+                <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest" id="winDownloadBtn" class="dl-btn windows">Download .exe</a>
+                <span class="version-text">Auto-updates included</span>
+            </div>
+
+            <div class="dl-card">
+                <div class="dl-icon">🐧 / 🍏</div>
+                <h3>Mac & Linux</h3>
+                <p>Compile directly from the source code.</p>
+                <a href="https://github.com/Omux25/gemini-desktop-app/archive/refs/heads/master.zip" id="sourceDownloadBtn" class="dl-btn source">Download Source</a>
+                <span class="version-text">Requires Node.js</span>
+            </div>
+        </div>
+
+        <footer>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </footer>
+    </div>
+
+    <script>
+        // Fetch latest release data from GitHub API
+        fetch('https://api.github.com/repos/Omux25/gemini-desktop-app/releases/latest')
+            .then(response => response.json())
+            .then(data => {
+                const version = data.tag_name;
+                document.getElementById('versionSubtitle').innerText = `Get the latest release (${version}) directly to your machine.`;
+                
+                // Find the windows .exe asset
+                const exeAsset = data.assets.find(asset => asset.name.endsWith('.exe'));
+                if (exeAsset) {
+                    const winBtn = document.getElementById('winDownloadBtn');
+                    winBtn.href = exeAsset.browser_download_url;
+                    winBtn.innerText = `Download ${version} (.exe)`;
+                }
+            })
+            .catch(err => {
+                console.error('Failed to fetch release info', err);
+                document.getElementById('versionSubtitle').innerText = "Get the latest release directly to your machine.";
+            });
+
+        // Blob animation
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.blob');
+            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            
+            if (blobs.length >= 2) {
+                blobs[0].style.transform = `translate(${x}px, ${y}px)`;
+                blobs[1].style.transform = `translate(${-x}px, ${-y}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
