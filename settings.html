@@ -17,13 +17,16 @@
             background-color: rgba(18, 18, 18, 0.95);
             color: #ffffff;
             margin: 0;
-            padding: 24px 24px 60px 24px;
+            padding: 24px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            height: 100vh;
+        }
+        .settings-wrapper {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            overflow-y: scroll; /* Force scrollbar to always be present to prevent layout shift */
-            overflow-x: hidden;
-            height: 100vh;
+            padding-bottom: 40px; /* Safe padding that flexbox won't ignore */
         }
         
         /* Custom scrollbar for settings */
@@ -170,7 +173,6 @@
         }
         button:hover {
             background-color: #0a4ab3;
-            transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
         }
         button:active {
@@ -180,10 +182,11 @@
     </style>
 </head>
 <body class="no-transition">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
-        <h2 style="margin: 0;">Settings</h2>
-        <span id="appVersionDisplay" style="color: #666; font-size: 12px; font-weight: 500;"></span>
-    </div>
+    <div class="settings-wrapper">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <h2 style="margin: 0;">Settings</h2>
+            <span id="appVersionDisplay" style="color: #666; font-size: 12px; font-weight: 500;"></span>
+        </div>
     <div class="setting-group-col">
         <div class="setting-info">
             <span class="setting-title">Global Hotkey</span>
@@ -263,6 +266,7 @@
     </div>
 
     <button id="saveBtn" style="margin-top: 16px; flex-shrink: 0;">Done</button>
+    </div>
 
     <script>
         // State variables for pill grids
