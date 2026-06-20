@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
+    goBack: () => ipcRenderer.send('window-control', 'back'),
     togglePin: () => ipcRenderer.send('window-control', 'pin'),
     toggleSettings: () => ipcRenderer.send('window-control', 'settings'),
     hideWindow: () => ipcRenderer.send('window-control', 'hide'),

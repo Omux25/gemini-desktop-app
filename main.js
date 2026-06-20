@@ -10,7 +10,7 @@ let tray = null;
 const TITLE_BAR_HEIGHT = 38;
 
 const WINDOW_SIZES = {
-  Compact: { width: 400, height: 600 },
+  Compact: { width: 450, height: 650 },
   Standard: { width: 600, height: 800 },
   Tall: { width: 600, height: 1000 },
   Large: { width: 800, height: 1000 }
@@ -222,6 +222,10 @@ ipcMain.on('window-control', (event, action) => {
     toggleSettings();
   } else if (action === 'close-settings') {
     if (settingsView) toggleSettings();
+  } else if (action === 'back') {
+    if (geminiView && geminiView.webContents.canGoBack()) {
+      geminiView.webContents.goBack();
+    }
   }
 });
 

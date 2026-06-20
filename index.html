@@ -29,7 +29,7 @@
 
 
         .titlebar-title {
-            padding-left: 16px;
+            padding-left: 6px;
             font-size: 13px;
             font-weight: 500;
             display: flex;
@@ -109,6 +109,9 @@
 <body>
     <div class="titlebar">
         <div class="titlebar-title">
+            <div class="control-btn" id="backBtn" title="Go Back" style="-webkit-app-region: no-drag; margin-right: 2px;">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </div>
             <img src="icon.png" class="titlebar-icon">
             Gemini
         </div>
@@ -140,6 +143,10 @@
             } else {
                 pinBtn.classList.remove('active');
             }
+        });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.api.goBack();
         });
 
         document.getElementById('settingsBtn').addEventListener('click', () => {
