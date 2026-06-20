@@ -289,6 +289,9 @@ ipcMain.on('window-control', (event, action) => {
     saveSettings(currentSettings);
     mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
     mainWindow.webContents.send('settings-update', currentSettings);
+    if (settingsView) {
+      settingsView.webContents.send('settings-update', currentSettings);
+    }
   } else if (action === 'settings') {
     toggleSettings();
   } else if (action === 'close-settings') {
