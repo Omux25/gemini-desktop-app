@@ -9,7 +9,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
-  "author": "Omux2",
+  "author": "Omux2 <omux2@example.com>",
   "license": "MIT",
   "build": {
     "appId": "com.omux2.geminidesktop",
