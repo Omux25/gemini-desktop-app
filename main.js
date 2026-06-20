@@ -204,13 +204,11 @@ function createWindow() {
   const enforceTopmost = () => {
     if (currentSettings.alwaysOnTop && mainWindow) {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+      mainWindow.setAlwaysOnTop(true, 'floating');
     }
   };
   mainWindow.on('focus', enforceTopmost);
-  mainWindow.on('blur', enforceTopmost);
   geminiView.webContents.on('focus', enforceTopmost);
-  geminiView.webContents.on('blur', enforceTopmost);
 
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
@@ -255,7 +253,7 @@ function toggleWindow() {
     if (mainWindow.isMinimized()) mainWindow.restore();
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    mainWindow.setAlwaysOnTop(true, 'floating');
     mainWindow.show();
     mainWindow.focus();
     
@@ -277,7 +275,7 @@ function toggleWindow() {
       mainWindow.setAlwaysOnTop(false);
     } else {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+      mainWindow.setAlwaysOnTop(true, 'floating');
     }
   }
 }
@@ -424,7 +422,7 @@ ipcMain.handle('save-settings', (event, newSettings) => {
   
   if (currentSettings.alwaysOnTop) {
     mainWindow.setAlwaysOnTop(false);
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    mainWindow.setAlwaysOnTop(true, 'floating');
   } else {
     mainWindow.setAlwaysOnTop(false);
   }
@@ -445,7 +443,7 @@ ipcMain.on('window-control', (event, action) => {
     saveSettings(currentSettings);
     if (currentSettings.alwaysOnTop) {
       mainWindow.setAlwaysOnTop(false);
-      mainWindow.setAlwaysOnTop(true, 'screen-saver');
+      mainWindow.setAlwaysOnTop(true, 'floating');
     } else {
       mainWindow.setAlwaysOnTop(false);
     }
