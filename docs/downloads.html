@@ -6,6 +6,7 @@
     <meta name="description" content="Download Gemini Desktop for Windows, Mac, and Linux.">
     <title>Download - Gemini Desktop</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
         .downloads-grid {
@@ -117,15 +118,18 @@
 
         <div class="downloads-grid">
             <div class="dl-card">
-                <div class="dl-icon">🪟</div>
+                <div class="dl-icon"><i class="fa-brands fa-windows" style="color: #4da3ff;"></i></div>
                 <h3>Windows</h3>
                 <p>Native setup executable for Windows 10 & 11.</p>
-                <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest" id="winDownloadBtn" class="dl-btn windows">Download .exe</a>
-                <span class="version-text">Auto-updates included</span>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest" id="winDownloadBtn" class="dl-btn windows">Download Setup (.exe)</a>
+                    <a href="https://github.com/Omux25/gemini-desktop-app/releases/latest" id="winPortableBtn" class="dl-btn source" style="font-size: 0.9rem;">Download Portable (.exe)</a>
+                </div>
+                <span class="version-text">Auto-updates included in Setup</span>
             </div>
 
             <div class="dl-card">
-                <div class="dl-icon">🐧 / 🍏</div>
+                <div class="dl-icon"><i class="fa-brands fa-linux" style="margin-right: 12px; color: #f5f5f5;"></i> <i class="fa-brands fa-apple" style="color: #a1a1aa;"></i></div>
                 <h3>Mac & Linux</h3>
                 <p>Compile directly from the source code.</p>
                 <a href="https://github.com/Omux25/gemini-desktop-app/archive/refs/heads/master.zip" id="sourceDownloadBtn" class="dl-btn source">Download Source</a>
@@ -146,12 +150,27 @@
                 const version = data.tag_name;
                 document.getElementById('versionSubtitle').innerText = `Get the latest release (${version}) directly to your machine.`;
                 
-                // Find the windows .exe asset
-                const exeAsset = data.assets.find(asset => asset.name.endsWith('.exe'));
-                if (exeAsset) {
-                    const winBtn = document.getElementById('winDownloadBtn');
-                    winBtn.href = exeAsset.browser_download_url;
+                // Find the windows .exe assets
+                const setupAsset = data.assets.find(asset => asset.name.endsWith('.exe') && asset.name.toLowerCase().includes('setup'));
+                const portableAsset = data.assets.find(asset => asset.name.endsWith('.exe') && asset.name.toLowerCase().includes('portable'));
+                const defaultExe = data.assets.find(asset => asset.name.endsWith('.exe'));
+
+                const winBtn = document.getElementById('winDownloadBtn');
+                const portBtn = document.getElementById('winPortableBtn');
+                
+                if (setupAsset) {
+                    winBtn.href = setupAsset.browser_download_url;
+                    winBtn.innerText = `Download Setup ${version}`;
+                } else if (defaultExe) {
+                    winBtn.href = defaultExe.browser_download_url;
                     winBtn.innerText = `Download ${version} (.exe)`;
+                }
+
+                if (portableAsset) {
+                    portBtn.href = portableAsset.browser_download_url;
+                    portBtn.innerText = `Download Portable ${version}`;
+                } else {
+                    portBtn.style.display = 'none';
                 }
             })
             .catch(err => {
