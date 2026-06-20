@@ -1,5 +1,8 @@
 name: Build Cross-Platform Releases
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
