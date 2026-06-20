@@ -249,10 +249,17 @@ app.commandLine.appendSwitch('js-flags', '--expose_gc');
 // Native Wayland support for Linux (Fixes resizing bugs in tiling WMs)
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 
-// Spoof UserAgent to prevent Google from blocking logins
-app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
-
 app.whenReady().then(() => {
+  // Fix Google Auth by dynamically stripping Electron/App from the User-Agent,
+  // which ensures Sec-CH-UA headers perfectly match the User-Agent string.
+  const defaultUserAgent = session.defaultSession.getUserAgent();
+  const cleanUserAgent = defaultUserAgent
+    .replace(/gemini-desktop\/\S+\s*/g, '')
+    .replace(/Electron\/\S+\s*/g, '')
+    .trim();
+  session.defaultSession.setUserAgent(cleanUserAgent);
+  app.userAgentFallback = cleanUserAgent;
+
   // Explicitly grant microphone permissions to Gemini for voice input, and allow basic permissions for login
   session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
     const url = webContents.getURL();
