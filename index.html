@@ -190,11 +190,11 @@
 <body>
     <div id="update-overlay" class="update-overlay">
         <div class="update-modal">
-            <h2>Update Ready!</h2>
-            <p>A new version of Gemini Desktop has been downloaded in the background. Restart now to apply the update.</p>
+            <h2>Update Available!</h2>
+            <p>Version <span id="updateVersionSpan"></span> is available for download.</p>
             <div class="actions">
-                <button id="dismissUpdateBtn" class="secondary">Later</button>
-                <button id="installUpdateBtn" class="primary">Install & Restart</button>
+                <button id="dismissUpdateBtn" class="secondary">Dismiss</button>
+                <button id="installUpdateBtn" class="primary">Download & Install</button>
             </div>
         </div>
     </div>
@@ -282,19 +282,32 @@
 
         // Updater Logic
         if (window.api.onUpdateAvailable) {
-            // We can optionally show something when downloading, but the modal is only for when it's ready
-            
-            window.api.onUpdateDownloaded(() => {
+            let currentUpdateVersion = '';
+
+            window.api.onUpdateAvailable((version) => {
+                currentUpdateVersion = version;
+                document.getElementById('updateVersionSpan').innerText = version;
                 document.getElementById('update-overlay').classList.add('show');
             });
-
-            document.getElementById('installUpdateBtn').addEventListener('click', () => {
-                window.api.installUpdate();
+            
+            window.api.onUpdateDownloaded(() => {
+                const btn = document.getElementById('installUpdateBtn');
+                btn.innerText = "Restart to Install";
+                btn.disabled = false;
+                btn.onclick = () => window.api.installUpdate();
             });
 
-            document.getElementById('dismissUpdateBtn').addEventListener('click', () => {
+            document.getElementById('installUpdateBtn').onclick = () => {
+                const btn = document.getElementById('installUpdateBtn');
+                btn.innerText = "Downloading...";
+                btn.disabled = true;
+                window.api.downloadUpdate();
+            };
+
+            document.getElementById('dismissUpdateBtn').onclick = () => {
                 document.getElementById('update-overlay').classList.remove('show');
-            });
+                window.api.dismissUpdate(currentUpdateVersion);
+            };
         }
     </script>
 </body>

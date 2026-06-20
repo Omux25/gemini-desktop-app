@@ -36,7 +36,8 @@ const defaultSettings = {
   alwaysOnTop: true,
   lockSize: false,
   launchOnStartup: false,
-  hardwareAcceleration: false
+  hardwareAcceleration: false,
+  dismissedUpdateVersion: null
 };
 
 function getSettings() {
@@ -290,10 +291,18 @@ app.whenReady().then(() => {
   registerHotkey(currentSettings.hotkey);
 
   // Auto Updater Logic
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.autoDownload = false;
+  autoUpdater.checkForUpdates();
   
-  autoUpdater.on('update-available', () => {
-    if (mainWindow) mainWindow.webContents.send('update-available');
+  autoUpdater.on('update-available', (info) => {
+    const version = info.version;
+    // Notify settings page regardless of dismiss state so manual check works
+    if (settingsView) settingsView.webContents.send('update-available', version);
+    
+    // Only notify main UI if the user hasn't explicitly dismissed this version
+    if (version !== currentSettings.dismissedUpdateVersion) {
+      if (mainWindow) mainWindow.webContents.send('update-available', version);
+    }
   });
 
   autoUpdater.on('update-downloaded', () => {
@@ -338,6 +347,19 @@ ipcMain.on('retry-connection', () => {
 ipcMain.on('install-update', () => {
   app.isQuiting = true;
   autoUpdater.quitAndInstall();
+});
+
+ipcMain.on('download-update', () => {
+  autoUpdater.downloadUpdate();
+});
+
+ipcMain.on('check-for-updates-manual', () => {
+  autoUpdater.checkForUpdates();
+});
+
+ipcMain.on('dismiss-update', (event, version) => {
+  currentSettings.dismissedUpdateVersion = version;
+  saveSettings(currentSettings);
 });
 
 ipcMain.handle('get-settings', () => {

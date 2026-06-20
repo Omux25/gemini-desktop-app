@@ -9,7 +9,9 @@ contextBridge.exposeInMainWorld('api', {
     closeApp: () => ipcRenderer.send('window-control', 'close'),
     retryConnection: () => ipcRenderer.send('retry-connection'),
     onSettingsUpdate: (callback) => ipcRenderer.on('settings-update', (event, settings) => callback(settings)),
-    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', (event, version) => callback(version)),
     onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
-    installUpdate: () => ipcRenderer.send('install-update')
+    installUpdate: () => ipcRenderer.send('install-update'),
+    downloadUpdate: () => ipcRenderer.send('download-update'),
+    dismissUpdate: (version) => ipcRenderer.send('dismiss-update', version)
 });
