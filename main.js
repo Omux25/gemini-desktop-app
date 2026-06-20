@@ -256,6 +256,7 @@ ipcMain.handle('get-settings', () => {
 });
 
 ipcMain.handle('save-settings', (event, newSettings) => {
+  const previousSize = currentSettings.windowSize;
   currentSettings = newSettings;
   saveSettings(currentSettings);
   
@@ -264,9 +265,11 @@ ipcMain.handle('save-settings', (event, newSettings) => {
     path: app.getPath('exe')
   });
 
-  mainWindow.setResizable(true); // Temporarily unlock to ensure size change
-  const newSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
-  mainWindow.setSize(newSize.width, newSize.height);
+  if (previousSize !== currentSettings.windowSize) {
+    mainWindow.setResizable(true); // Temporarily unlock to ensure size change
+    const newSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
+    mainWindow.setSize(newSize.width, newSize.height);
+  }
   
   mainWindow.setAlwaysOnTop(currentSettings.alwaysOnTop);
   mainWindow.setResizable(!currentSettings.lockSize);
