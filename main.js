@@ -214,6 +214,10 @@ function createWindow() {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
+      if (geminiView) {
+        geminiView.webContents.setBackgroundThrottling(true);
+        geminiView.webContents.session.clearCache();
+      }
     } else {
       const bounds = mainWindow.getBounds();
       currentSettings.windowX = bounds.x;
@@ -249,8 +253,16 @@ function toggleSettings() {
 function toggleWindow() {
   if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
     mainWindow.hide();
+    if (geminiView) {
+      geminiView.webContents.setBackgroundThrottling(true);
+      geminiView.webContents.session.clearCache();
+    }
   } else {
     if (mainWindow.isMinimized()) mainWindow.restore();
+    
+    if (geminiView) {
+      geminiView.webContents.setBackgroundThrottling(false);
+    }
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
     mainWindow.setAlwaysOnTop(true, 'floating');
@@ -295,6 +307,8 @@ if (currentSettings.hardwareAcceleration === false) {
 
 // Memory optimizations
 app.commandLine.appendSwitch('js-flags', '--expose_gc'); 
+app.commandLine.appendSwitch('renderer-process-limit', '1'); // Force all views to share a single renderer process to save massive RAM
+app.commandLine.appendSwitch('disable-features', 'HardwareMediaKeyHandling,MediaSessionService'); // Disable unused heavy features
 
 // Native Wayland support for Linux (Fixes resizing bugs in tiling WMs)
 app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
