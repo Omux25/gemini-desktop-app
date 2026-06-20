@@ -17,11 +17,11 @@
             background-color: rgba(18, 18, 18, 0.95);
             color: #ffffff;
             margin: 0;
-            padding: 24px;
+            padding: 24px 24px 60px 24px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            overflow-y: auto;
+            overflow-y: scroll; /* Force scrollbar to always be present to prevent layout shift */
             overflow-x: hidden;
             height: 100vh;
         }
@@ -262,7 +262,7 @@
         <button id="checkUpdateBtn" style="margin: 0 0 0 16px; padding: 8px 16px; border-radius: 6px; font-size: 13px; flex-shrink: 0;">Check for Updates</button>
     </div>
 
-    <button id="saveBtn" style="margin-bottom: 40px; margin-top: 16px;">Done</button>
+    <button id="saveBtn" style="margin-top: 16px; flex-shrink: 0;">Done</button>
 
     <script>
         // State variables for pill grids
