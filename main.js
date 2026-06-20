@@ -1,12 +1,14 @@
 const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView } = require('electron');
-const contextMenu = require('electron-context-menu');
 const path = require('path');
 const fs = require('fs');
 
-contextMenu({
-  showSaveImageAs: true,
-  showInspectElement: false
-});
+(async () => {
+  const contextMenu = (await import('electron-context-menu')).default;
+  contextMenu({
+    showSaveImageAs: true,
+    showInspectElement: false
+  });
+})();
 
 let mainWindow;
 let geminiView;
