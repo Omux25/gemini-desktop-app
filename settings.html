@@ -230,6 +230,28 @@
         </label>
     </div>
 
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Launch on Startup</span>
+            <span class="setting-desc">Start quietly in tray when PC boots</span>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="launchOnStartup">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Hardware Acceleration</span>
+            <span class="setting-desc">Enable for smoother scrolling (requires app restart)</span>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="hardwareAcceleration">
+            <span class="slider"></span>
+        </label>
+    </div>
+
     <button id="saveBtn">Done</button>
 
     <script>
@@ -242,7 +264,9 @@
                 hotkey: selectedHotkey,
                 windowSize: selectedWindowSize,
                 alwaysOnTop: document.getElementById('alwaysOnTop').checked,
-                lockSize: document.getElementById('lockSize').checked
+                lockSize: document.getElementById('lockSize').checked,
+                launchOnStartup: document.getElementById('launchOnStartup').checked,
+                hardwareAcceleration: document.getElementById('hardwareAcceleration').checked
             };
             await window.settingsAPI.saveSettings(newSettings);
         }
@@ -287,6 +311,8 @@
             
             document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
             document.getElementById('lockSize').checked = settings.lockSize ?? false;
+            document.getElementById('launchOnStartup').checked = settings.launchOnStartup ?? false;
+            document.getElementById('hardwareAcceleration').checked = settings.hardwareAcceleration ?? false;
 
             // Dynamically add transition class on interaction to prevent initial load animation
             document.querySelectorAll('.switch').forEach(lbl => {
@@ -298,6 +324,8 @@
             // Auto-save on switch toggles
             document.getElementById('alwaysOnTop').addEventListener('change', autoSaveSettings);
             document.getElementById('lockSize').addEventListener('change', autoSaveSettings);
+            document.getElementById('launchOnStartup').addEventListener('change', autoSaveSettings);
+            document.getElementById('hardwareAcceleration').addEventListener('change', autoSaveSettings);
 
             // Initialize pill grids
             setupPillGrid('hotkeyGrid', (val) => { selectedHotkey = val; });

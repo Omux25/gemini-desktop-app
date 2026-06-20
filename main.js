@@ -1,6 +1,12 @@
 const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView } = require('electron');
+const contextMenu = require('electron-context-menu');
 const path = require('path');
 const fs = require('fs');
+
+contextMenu({
+  showSaveImageAs: true,
+  showInspectElement: false
+});
 
 let mainWindow;
 let geminiView;
@@ -22,7 +28,9 @@ const defaultSettings = {
   hotkey: 'Alt+Space',
   windowSize: 'Standard',
   alwaysOnTop: true,
-  lockSize: false
+  lockSize: false,
+  launchOnStartup: false,
+  hardwareAcceleration: false
 };
 
 function getSettings() {
@@ -151,8 +159,12 @@ function registerHotkey(hotkey) {
   }
 }
 
+// Hardware Acceleration logic
+if (currentSettings.hardwareAcceleration === false) {
+  app.disableHardwareAcceleration(); 
+}
+
 // Memory optimizations
-app.disableHardwareAcceleration(); 
 app.commandLine.appendSwitch('js-flags', '--expose_gc'); 
 
 app.whenReady().then(() => {
@@ -196,6 +208,11 @@ ipcMain.handle('save-settings', (event, newSettings) => {
   currentSettings = newSettings;
   saveSettings(currentSettings);
   
+  app.setLoginItemSettings({
+    openAtLogin: currentSettings.launchOnStartup === true,
+    path: app.getPath('exe')
+  });
+
   mainWindow.setResizable(true); // Temporarily unlock to ensure size change
   const newSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
   mainWindow.setSize(newSize.width, newSize.height);
