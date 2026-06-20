@@ -26,7 +26,9 @@ jobs:
         run: npm install
 
       - name: Build Application
-        run: npx electron-builder --publish never
+        run: npx electron-builder --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
