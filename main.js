@@ -186,6 +186,17 @@ function createWindow() {
     }
   });
 
+  // Windows Bug Fix: Frameless windows with WebContentsView lose WS_EX_TOPMOST 
+  // when the child view is clicked. We must force Win32 to re-apply the style.
+  const enforceTopmost = () => {
+    if (currentSettings.alwaysOnTop && mainWindow) {
+      mainWindow.setAlwaysOnTop(false);
+      mainWindow.setAlwaysOnTop(true);
+    }
+  };
+  mainWindow.on('focus', enforceTopmost);
+  geminiView.webContents.on('focus', enforceTopmost);
+
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
