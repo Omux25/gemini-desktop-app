@@ -109,6 +109,7 @@ function createWindow() {
   });
   settingsView.setBackgroundColor('#00000000');
   settingsView.webContents.loadFile('settings.html');
+  mainWindow.contentView.addChildView(settingsView);
   
   function updateViewBounds() {
     if (!mainWindow) return;
@@ -122,8 +123,12 @@ function createWindow() {
     if (geminiView) {
         geminiView.setBounds(viewBounds);
     }
-    if (isSettingsOpen) {
-        settingsView.setBounds(viewBounds);
+    if (settingsView) {
+        if (isSettingsOpen) {
+            settingsView.setBounds(viewBounds);
+        } else {
+            settingsView.setBounds({ x: -9999, y: -9999, width: 0, height: 0 });
+        }
     }
   }
 
@@ -160,20 +165,25 @@ function createWindow() {
 }
 
 function toggleSettings() {
-  if (!isSettingsOpen) {
-    mainWindow.contentView.addChildView(settingsView);
-    const bounds = mainWindow.getContentBounds();
-    settingsView.setBounds({ 
-      x: 0, 
-      y: TITLE_BAR_HEIGHT, 
-      width: bounds.width, 
-      height: bounds.height - TITLE_BAR_HEIGHT 
-    });
+  isSettingsOpen = !isSettingsOpen;
+  
+  if (isSettingsOpen) {
     settingsView.webContents.send('settings-update', currentSettings);
-    isSettingsOpen = true;
+  }
+  
+  // Update bounds based on the new state
+  const bounds = mainWindow.getContentBounds();
+  const viewBounds = { 
+    x: 0, 
+    y: TITLE_BAR_HEIGHT, 
+    width: bounds.width, 
+    height: bounds.height - TITLE_BAR_HEIGHT 
+  };
+  
+  if (isSettingsOpen) {
+      settingsView.setBounds(viewBounds);
   } else {
-    mainWindow.contentView.removeChildView(settingsView);
-    isSettingsOpen = false;
+      settingsView.setBounds({ x: -9999, y: -9999, width: 0, height: 0 });
   }
 }
 
