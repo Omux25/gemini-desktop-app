@@ -200,6 +200,9 @@ if (currentSettings.hardwareAcceleration === false) {
 // Memory optimizations
 app.commandLine.appendSwitch('js-flags', '--expose_gc'); 
 
+// Native Wayland support for Linux (Fixes resizing bugs in tiling WMs)
+app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+
 // Spoof UserAgent to prevent Google from blocking logins
 app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
@@ -276,7 +279,9 @@ ipcMain.on('window-control', (event, action) => {
   } else if (action === 'close-settings') {
     if (settingsView) toggleSettings();
   } else if (action === 'back') {
-    if (geminiView && geminiView.webContents.canGoBack()) {
+    if (settingsView) {
+      toggleSettings(); // Close settings if open
+    } else if (geminiView && geminiView.webContents.canGoBack()) {
       geminiView.webContents.goBack();
     }
   }
