@@ -376,7 +376,8 @@ ipcMain.on('retry-connection', () => {
 
 ipcMain.on('install-update', () => {
   app.isQuiting = true;
-  autoUpdater.quitAndInstall();
+  // quitAndInstall(isSilent, isForceRunAfter) -> true, true makes it seamless and reopens the app
+  autoUpdater.quitAndInstall(true, true);
 });
 
 ipcMain.on('download-update', () => {
