@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Desktop Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 20px;
+            color: #e0e0e0;
+        }
+        .setting-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e1e1e;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .setting-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .setting-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .setting-desc {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #0b57d0;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        /* Select Input */
+        select {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+        button {
+            margin-top: 10px;
+            background-color: #0b57d0;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0a4ab3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Settings</h2>
+
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Global Hotkey</span>
+            <span class="setting-desc">Shortcut to show/hide the app</span>
+        </div>
+        <select id="hotkey">
+            <option value="Alt+Space">Alt + Space</option>
+            <option value="CommandOrControl+Space">Ctrl/Cmd + Space</option>
+            <option value="CommandOrControl+Shift+G">Ctrl/Cmd + Shift + G</option>
+            <option value="F12">F12</option>
+        </select>
+    </div>
+
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Always on Top</span>
+            <span class="setting-desc">Keep window above other apps</span>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="alwaysOnTop">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="setting-group">
+        <div class="setting-info">
+            <span class="setting-title">Lock Window Size</span>
+            <span class="setting-desc">Prevent accidental resizing</span>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="lockSize">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <button id="saveBtn">Save & Apply</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load current settings
+            const settings = await window.settingsAPI.getSettings();
+            document.getElementById('hotkey').value = settings.hotkey || 'Alt+Space';
+            document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
+            document.getElementById('lockSize').checked = settings.lockSize ?? false;
+
+            // Save settings on button click
+            document.getElementById('saveBtn').addEventListener('click', async () => {
+                const newSettings = {
+                    hotkey: document.getElementById('hotkey').value,
+                    alwaysOnTop: document.getElementById('alwaysOnTop').checked,
+                    lockSize: document.getElementById('lockSize').checked
+                };
+                await window.settingsAPI.saveSettings(newSettings);
+                window.close(); // Close the settings window after saving
+            });
+        });
+    </script>
+</body>
+</html>

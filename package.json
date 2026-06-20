@@ -14,7 +14,10 @@
   "build": {
     "appId": "com.omux2.geminidesktop",
     "win": {
-      "target": ["nsis", "portable"],
+      "target": [
+        "nsis",
+        "portable"
+      ],
       "icon": "build/icon.png"
     },
     "nsis": {
@@ -26,5 +29,8 @@
   "devDependencies": {
     "electron": "^42.4.1",
     "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2"
   }
 }
