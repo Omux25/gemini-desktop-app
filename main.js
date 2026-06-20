@@ -12,7 +12,8 @@ const fs = require('fs');
 
 let mainWindow;
 let geminiView;
-let settingsView = null;
+let settingsView;
+let isSettingsOpen = false;
 let tray = null;
 
 const TITLE_BAR_HEIGHT = 38;
@@ -99,6 +100,16 @@ function createWindow() {
 
   mainWindow.contentView.addChildView(geminiView);
   
+  settingsView = new WebContentsView({
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'settings_preload.js')
+    }
+  });
+  settingsView.setBackgroundColor('#00000000');
+  settingsView.webContents.loadFile('settings.html');
+  
   function updateViewBounds() {
     if (!mainWindow) return;
     const bounds = mainWindow.getContentBounds();
@@ -111,7 +122,7 @@ function createWindow() {
     if (geminiView) {
         geminiView.setBounds(viewBounds);
     }
-    if (settingsView) {
+    if (isSettingsOpen) {
         settingsView.setBounds(viewBounds);
     }
   }
@@ -149,19 +160,8 @@ function createWindow() {
 }
 
 function toggleSettings() {
-  if (!settingsView) {
-    settingsView = new WebContentsView({
-      webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true,
-        preload: path.join(__dirname, 'settings_preload.js')
-      }
-    });
-    settingsView.setBackgroundColor('#00000000'); // Transparent background
-    settingsView.webContents.loadFile('settings.html');
+  if (!isSettingsOpen) {
     mainWindow.contentView.addChildView(settingsView);
-    
-    // Resize immediately
     const bounds = mainWindow.getContentBounds();
     settingsView.setBounds({ 
       x: 0, 
@@ -169,9 +169,11 @@ function toggleSettings() {
       width: bounds.width, 
       height: bounds.height - TITLE_BAR_HEIGHT 
     });
+    settingsView.webContents.send('settings-update', currentSettings);
+    isSettingsOpen = true;
   } else {
     mainWindow.contentView.removeChildView(settingsView);
-    settingsView = null;
+    isSettingsOpen = false;
   }
 }
 
@@ -277,9 +279,9 @@ ipcMain.on('window-control', (event, action) => {
   } else if (action === 'settings') {
     toggleSettings();
   } else if (action === 'close-settings') {
-    if (settingsView) toggleSettings();
+    if (isSettingsOpen) toggleSettings();
   } else if (action === 'back') {
-    if (settingsView) {
+    if (isSettingsOpen) {
       toggleSettings(); // Close settings if open
     } else if (geminiView && geminiView.webContents.canGoBack()) {
       geminiView.webContents.goBack();

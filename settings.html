@@ -303,16 +303,28 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Load current settings
+            // Function to update UI state
+            function updateUI(settings) {
+                selectedHotkey = settings.hotkey || 'Alt+Space';
+                selectedWindowSize = settings.windowSize || 'Standard';
+                
+                document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
+                document.getElementById('lockSize').checked = settings.lockSize ?? false;
+                document.getElementById('launchOnStartup').checked = settings.launchOnStartup ?? false;
+                document.getElementById('hardwareAcceleration').checked = settings.hardwareAcceleration ?? false;
+                
+                setActivePill('hotkeyGrid', selectedHotkey);
+                setActivePill('windowSizeGrid', selectedWindowSize);
+            }
+
+            // Listen for instant updates from main process when toggling
+            if (window.settingsAPI.onUpdate) {
+                window.settingsAPI.onUpdate(updateUI);
+            }
+
+            // Load initial settings
             const settings = await window.settingsAPI.getSettings();
-            
-            selectedHotkey = settings.hotkey || 'Alt+Space';
-            selectedWindowSize = settings.windowSize || 'Standard';
-            
-            document.getElementById('alwaysOnTop').checked = settings.alwaysOnTop ?? true;
-            document.getElementById('lockSize').checked = settings.lockSize ?? false;
-            document.getElementById('launchOnStartup').checked = settings.launchOnStartup ?? false;
-            document.getElementById('hardwareAcceleration').checked = settings.hardwareAcceleration ?? false;
+            updateUI(settings);
 
             // Dynamically add transition class on interaction to prevent initial load animation
             document.querySelectorAll('.switch').forEach(lbl => {
@@ -330,10 +342,6 @@
             // Initialize pill grids
             setupPillGrid('hotkeyGrid', (val) => { selectedHotkey = val; });
             setupPillGrid('windowSizeGrid', (val) => { selectedWindowSize = val; });
-            
-            // Set initial active pills
-            setActivePill('hotkeyGrid', selectedHotkey);
-            setActivePill('windowSizeGrid', selectedWindowSize);
 
             // Remove no-transition class slightly after load to prevent toggle animation on open
             setTimeout(() => {
