@@ -180,8 +180,10 @@
     </style>
 </head>
 <body class="no-transition">
-    <h2>Settings</h2>
-
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+        <h2 style="margin: 0;">Settings</h2>
+        <span id="appVersionDisplay" style="color: #666; font-size: 12px; font-weight: 500;"></span>
+    </div>
     <div class="setting-group-col">
         <div class="setting-info">
             <span class="setting-title">Global Hotkey</span>
@@ -312,6 +314,10 @@
                 document.getElementById('lockSize').checked = settings.lockSize ?? false;
                 document.getElementById('launchOnStartup').checked = settings.launchOnStartup ?? false;
                 document.getElementById('hardwareAcceleration').checked = settings.hardwareAcceleration ?? false;
+                
+                if (settings.appVersion) {
+                    document.getElementById('appVersionDisplay').innerText = `v${settings.appVersion}`;
+                }
                 
                 setActivePill('hotkeyGrid', selectedHotkey);
                 setActivePill('windowSizeGrid', selectedWindowSize);

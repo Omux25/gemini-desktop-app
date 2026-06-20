@@ -159,7 +159,7 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     updateViewBounds();
     mainWindow.show();
-    mainWindow.webContents.send('settings-update', currentSettings);
+    mainWindow.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
   });
 
   geminiView.webContents.loadURL('https://gemini.google.com');
@@ -216,7 +216,7 @@ function toggleSettings() {
   isSettingsOpen = !isSettingsOpen;
   
   if (isSettingsOpen) {
-    settingsView.webContents.send('settings-update', currentSettings);
+    settingsView.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
   }
   
   // Update bounds based on the new state
@@ -341,7 +341,7 @@ ipcMain.on('install-update', () => {
 });
 
 ipcMain.handle('get-settings', () => {
-  return currentSettings;
+  return { ...currentSettings, appVersion: app.getVersion() };
 });
 
 ipcMain.handle('save-settings', (event, newSettings) => {
@@ -368,7 +368,7 @@ ipcMain.handle('save-settings', (event, newSettings) => {
   }
   
   mainWindow.setResizable(!currentSettings.lockSize);
-  mainWindow.webContents.send('settings-update', currentSettings);
+  mainWindow.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
   registerHotkey(currentSettings.hotkey);
 });
 
@@ -387,9 +387,9 @@ ipcMain.on('window-control', (event, action) => {
     } else {
       mainWindow.setAlwaysOnTop(false);
     }
-    mainWindow.webContents.send('settings-update', currentSettings);
+    mainWindow.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
     if (settingsView) {
-      settingsView.webContents.send('settings-update', currentSettings);
+      settingsView.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
     }
   } else if (action === 'settings') {
     toggleSettings();
