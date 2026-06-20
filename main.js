@@ -358,6 +358,14 @@ app.whenReady().then(() => {
     if (settingsView) settingsView.webContents.send('update-downloaded');
   });
 
+  autoUpdater.on('update-not-available', () => {
+    if (settingsView) settingsView.webContents.send('update-not-available');
+  });
+
+  autoUpdater.on('error', (err) => {
+    if (settingsView) settingsView.webContents.send('update-error', err.message);
+  });
+
   // Force garbage collection every 30 seconds when idle
   setInterval(() => {
       if (!mainWindow.isVisible() && global.gc) {

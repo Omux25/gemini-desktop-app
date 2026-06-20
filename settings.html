@@ -371,15 +371,6 @@
                     checkUpdateBtn.innerText = "Checking...";
                     checkUpdateBtn.disabled = true;
                     window.settingsAPI.checkForUpdates();
-                    
-                    // Fallback in case no event comes back quickly
-                    setTimeout(() => {
-                        if (currentUpdateState === 'check' && checkUpdateBtn.innerText === "Checking...") {
-                            checkUpdateBtn.innerText = "Check for Updates";
-                            checkUpdateBtn.disabled = false;
-                            updateStatusText.innerText = "You are up to date.";
-                        }
-                    }, 3000);
                 } else if (currentUpdateState === 'download') {
                     checkUpdateBtn.innerText = "Downloading... (0%)";
                     checkUpdateBtn.disabled = true;
@@ -388,6 +379,24 @@
                     window.settingsAPI.installUpdate();
                 }
             });
+
+            if (window.settingsAPI.onUpdateNotAvailable) {
+                window.settingsAPI.onUpdateNotAvailable(() => {
+                    if (currentUpdateState === 'check') {
+                        checkUpdateBtn.innerText = "Check for Updates";
+                        checkUpdateBtn.disabled = false;
+                        updateStatusText.innerText = "You are up to date.";
+                    }
+                });
+            }
+
+            if (window.settingsAPI.onUpdateError) {
+                window.settingsAPI.onUpdateError((err) => {
+                    checkUpdateBtn.innerText = "Check for Updates";
+                    checkUpdateBtn.disabled = false;
+                    updateStatusText.innerText = "Update error (Check network).";
+                });
+            }
 
             if (window.settingsAPI.onUpdateAvailable) {
                 window.settingsAPI.onUpdateAvailable((version) => {

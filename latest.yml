@@ -1,0 +1,8 @@
+version: 3.0.6
+files:
+  - url: Gemini-Desktop-Setup-3.0.6.exe
+    sha512: tkWoJWeDrxXjtXQjVqKN6/FGepk9B1yJbRgX1ZP2OCGagTaGQ36lJljuxzCTkeoAIAnd76BylDzTRCIKpSVU+A==
+    size: 103892161
+path: Gemini-Desktop-Setup-3.0.6.exe
+sha512: tkWoJWeDrxXjtXQjVqKN6/FGepk9B1yJbRgX1ZP2OCGagTaGQ36lJljuxzCTkeoAIAnd76BylDzTRCIKpSVU+A==
+releaseDate: '2026-06-20T19:25:56.541Z'
