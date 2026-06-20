@@ -23,7 +23,10 @@
     "mac": {
       "target": ["dmg", "zip"],
       "icon": "icon.png",
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Required for voice input in Gemini."
+      }
     },
     "linux": {
       "target": ["AppImage", "deb"],

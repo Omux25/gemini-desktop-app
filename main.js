@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView } = require('electron');
+const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, WebContentsView, session, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -30,6 +30,8 @@ const configPath = path.join(app.getPath('userData'), 'settings.json');
 const defaultSettings = {
   hotkey: process.platform === 'darwin' ? 'Command+Option+Space' : 'Alt+Space',
   windowSize: 'Standard',
+  windowX: null,
+  windowY: null,
   alwaysOnTop: true,
   lockSize: false,
   launchOnStartup: false,
@@ -72,9 +74,28 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
 });
 function createWindow() {
   const initialSize = WINDOW_SIZES[currentSettings.windowSize] || WINDOW_SIZES.Standard;
+  
+  // Validate saved coordinates to ensure they are still on-screen
+  let validX = undefined;
+  let validY = undefined;
+  if (currentSettings.windowX !== null && currentSettings.windowY !== null) {
+    const displays = screen.getAllDisplays();
+    const isVisible = displays.some(display => {
+      const bounds = display.bounds;
+      return currentSettings.windowX >= bounds.x && currentSettings.windowY >= bounds.y &&
+             currentSettings.windowX < bounds.x + bounds.width && currentSettings.windowY < bounds.y + bounds.height;
+    });
+    if (isVisible) {
+      validX = currentSettings.windowX;
+      validY = currentSettings.windowY;
+    }
+  }
+
   mainWindow = new BrowserWindow({
     width: initialSize.width,
     height: initialSize.height,
+    x: validX,
+    y: validY,
     icon: path.join(__dirname, 'icon.png'),
     frame: false, // Frameless for custom title bar
     backgroundColor: '#121212',
@@ -142,6 +163,14 @@ function createWindow() {
 
   geminiView.webContents.loadURL('https://gemini.google.com');
 
+  // Handle Offline Status
+  geminiView.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+    // Ignore aborted requests (-3) which happen normally during some navigations
+    if (errorCode !== -3 && validatedURL.includes('google.com')) {
+      geminiView.webContents.loadFile('offline.html');
+    }
+  });
+
   // Security: Prevent external links from hijacking the wrapper
   geminiView.webContents.setWindowOpenHandler(({ url }) => {
     require('electron').shell.openExternal(url);
@@ -160,6 +189,11 @@ function createWindow() {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
+    } else {
+      const bounds = mainWindow.getBounds();
+      currentSettings.windowX = bounds.x;
+      currentSettings.windowY = bounds.y;
+      saveSettings(currentSettings);
     }
   });
 }
@@ -219,6 +253,15 @@ app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
 app.userAgentFallback = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 app.whenReady().then(() => {
+  // Explicitly grant microphone permissions to Gemini for voice input
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (webContents.getURL().startsWith('https://gemini.google.com') && (permission === 'media' || permission === 'mediaAudio')) {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+
   createWindow();
   registerHotkey(currentSettings.hotkey);
 
@@ -251,6 +294,12 @@ app.whenReady().then(() => {
 });
 
 // IPC Listeners for Settings
+ipcMain.on('retry-connection', () => {
+  if (geminiView) {
+    geminiView.webContents.loadURL('https://gemini.google.com');
+  }
+});
+
 ipcMain.handle('get-settings', () => {
   return currentSettings;
 });

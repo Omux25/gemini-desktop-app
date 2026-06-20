@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Desktop - Offline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131314; /* Gemini dark mode background */
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            opacity: 0.7;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #e3e3e3;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #9aa0a6;
+            margin: 0;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .retry-btn {
+            background-color: #0b57d0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 10px;
+        }
+
+        .retry-btn:hover {
+            background-color: #0a4ab3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3);
+        }
+
+        .retry-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Loading spinner for when checking connection */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Minimalist Wi-Fi slash icon -->
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+
+        <h1 class="title">No Internet Connection</h1>
+        <p class="subtitle">Gemini Desktop requires an active internet connection to function. Please check your network and try again.</p>
+        
+        <button class="retry-btn" id="retryBtn">Try Again</button>
+        <div class="spinner" id="spinner"></div>
+    </div>
+
+    <script>
+        const retryBtn = document.getElementById('retryBtn');
+        const spinner = document.getElementById('spinner');
+
+        retryBtn.addEventListener('click', () => {
+            // Show loading state
+            retryBtn.style.display = 'none';
+            spinner.style.display = 'block';
+
+            // Give it a tiny visual delay, then send IPC
+            setTimeout(() => {
+                window.api.retryConnection();
+                
+                // If it fails again, the main process will just reload this page,
+                // so we can reset the button after 2 seconds just in case it doesn't navigate.
+                setTimeout(() => {
+                    retryBtn.style.display = 'block';
+                    spinner.style.display = 'none';
+                }, 2000);
+            }, 300);
+        });
+    </script>
+</body>
+</html>
