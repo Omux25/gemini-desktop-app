@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./splash.png" alt="Gemini Desktop Banner" width="100%" />
+  <img src="./assets/open_close.gif" alt="Gemini Desktop Banner" width="100%" />
 
   <h1>Gemini Desktop</h1>
 
@@ -30,17 +30,17 @@ This application brings Google Gemini out of your browser tabs and turns it into
 
 ## ✨ Features
 
-- **Global Hotkey:** Instantly summon or hide the chat window from anywhere without interrupting your workflow.
+- **Smart Global Hotkey:** Instantly summon or hide the chat window from anywhere without interrupting your workflow. If the window is buried behind a game or browser, the hotkey instantly snaps it to the front.
   - Windows / Linux: `Alt + Space`
   - macOS: `Command + Option + Space`
+- **Native Auto-Updater:** Seamlessly checks for and downloads new versions in the background (Windows & macOS).
 - **Native Microphone Support:** Securely handles native OS microphone permission requests so you can seamlessly use Voice-to-Text.
 - **Smart Window Memory:** Automatically tracks and remembers your exact window position (X/Y coordinates) so the app respawns right where you left it.
-- **Always on Top:** Pin the window so you can easily reference Gemini while gaming, coding, or working.
+- **Always on Top:** Pin the window so you can easily reference Gemini while gaming, coding, or working. Uses the native Windows `pop-up-menu` level to successfully overlay Full-Screen Exclusive games.
 - **Custom Window Sizes:** Switch between Compact, Standard, Tall, and Large presets to perfectly fit your screen.
 - **Custom Offline Mode:** A sleek, native "No Internet" UI that intercepts drops and prevents Chromium crash screens.
-- **System Tray Integration:** Runs quietly in the background without cluttering your taskbar.
-- **Hardware Acceleration Toggle:** Choose between Buttery Smooth GPU rendering or Extreme Battery/RAM Saver mode.
-- **Memory Optimized:** Automatically throttles resources and forces garbage collection when hidden to save RAM.
+- **Background Tray Utility:** Runs quietly in the background (hidden from the Windows Taskbar and macOS Dock) to stay completely out of your way until summoned.
+- **Memory Optimized:** Automatically throttles resources, suspends background tabs, and forces deep garbage collection when hidden to save RAM.
 
 ## 📥 Download & Install
 
@@ -93,5 +93,5 @@ This project uses an automated GitHub Actions pipeline to compile releases, but 
 
 ## 📜 License
 
-This project is licensed under the **MIT** License.
-You are completely free to use, modify, distribute, and build upon this code without restriction.
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
+You are completely free to use, modify, distribute, and build upon this code for non-commercial purposes only.

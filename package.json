@@ -1,16 +1,16 @@
 {
   "name": "gemini-desktop",
   "productName": "Gemini Desktop",
-  "version": "3.0.7",
-  "description": "A native Windows desktop app for Google Gemini",
-  "main": "main.js",
+  "version": "4.0.0",
+  "description": "A native cross-platform desktop app for Google Gemini",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
   "author": "Omux2 <omux2@example.com>",
-  "license": "MIT",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/Omux25/gemini-desktop-app.git"
@@ -23,14 +23,14 @@
         "nsis",
         "portable"
       ],
-      "icon": "icon.png"
+      "icon": "assets/icon.png"
     },
     "mac": {
       "target": [
         "dmg",
         "zip"
       ],
-      "icon": "icon.png",
+      "icon": "assets/icon.png",
       "category": "public.app-category.productivity",
       "extendInfo": {
         "NSMicrophoneUsageDescription": "Required for voice input in Gemini."
@@ -41,7 +41,7 @@
         "AppImage",
         "deb"
       ],
-      "icon": "icon.png",
+      "icon": "assets/icon.png",
       "category": "Utility"
     },
     "nsis": {

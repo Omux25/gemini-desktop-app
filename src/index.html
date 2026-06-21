@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #131314; /* Matches Gemini Dark Mode */
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .titlebar {
+            height: 38px;
+            background-color: #131314; /* Solid color, no gradient */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-app-region: drag;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04); /* Very subtle flat line */
+            color: #e3e3e3;
+            user-select: none;
+            position: relative;
+            z-index: 10;
+        }
+
+
+
+        .titlebar-title {
+            padding-left: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .titlebar-icon {
+            width: 18px;
+            height: 18px;
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.1));
+        }
+
+        .titlebar-controls {
+            display: flex;
+            align-items: center;
+            -webkit-app-region: no-drag;
+            height: 100%;
+            padding-right: 6px;
+            gap: 4px;
+        }
+
+        .control-btn {
+            width: 32px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+        }
+
+        .control-btn.is-hovered {
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: scale(1.05);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.close.is-hovered {
+            background-color: #e81123;
+            color: white;
+            box-shadow: 0 0 8px rgba(232, 17, 35, 0.5);
+        }
+
+        .control-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #9aa0a6;
+            transition: fill 0.2s;
+        }
+
+        .control-btn.is-hovered svg {
+            fill: #ffffff;
+        }
+
+        /* Pinned state glow */
+        .control-btn.active {
+            background-color: rgba(66, 133, 244, 0.15);
+        }
+        
+        .control-btn.active svg {
+            fill: #669df6; 
+            filter: drop-shadow(0 0 3px rgba(102, 157, 246, 0.5));
+        }
+
+        /* Specifically adjust close button SVG */
+        .control-btn.close.is-hovered svg {
+            fill: #ffffff;
+        }
+
+        .update-overlay {
+            position: absolute;
+            top: 38px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+        }
+        .update-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .update-modal {
+            background: #1e1e1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .update-overlay.show .update-modal {
+            transform: scale(1);
+        }
+        .update-modal h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .update-modal p {
+            margin: 0;
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+        .update-modal .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .update-modal button {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .update-modal button.primary {
+            background: #1a73e8;
+            color: white;
+        }
+        .update-modal button.primary:hover {
+            background: #1557b0;
+        }
+        .update-modal button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .update-modal button.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div id="update-overlay" class="update-overlay">
+        <div class="update-modal">
+            <h2>Update Available!</h2>
+            <p>Version <span id="updateVersionSpan"></span> is available for download.</p>
+            <div class="actions">
+                <button id="dismissUpdateBtn" class="secondary">Dismiss</button>
+                <button id="installUpdateBtn" class="primary">Download & Install</button>
+            </div>
+        </div>
+    </div>
+    <div class="titlebar">
+        <div class="titlebar-title">
+            <div style="display: flex; gap: 2px; margin-right: 6px; -webkit-app-region: no-drag;">
+                <div class="control-btn" id="backBtn" title="Go Back">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                </div>
+                <!-- Refresh Button -->
+                <div class="control-btn" id="refreshBtn" title="Reload Page">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                </div>
+            </div>
+            <img src="../assets/icon.png" class="titlebar-icon">
+            Gemini Desktop
+        </div>
+        <div class="titlebar-controls">
+            <!-- Settings Button -->
+            <div class="control-btn" id="settingsBtn" title="Open Settings">
+                <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+            </div>
+            <!-- Pin Button -->
+            <div class="control-btn" id="pinBtn" title="Toggle Always on Top">
+                <svg viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
+            </div>
+            <!-- Minimize Button -->
+            <div class="control-btn" id="hideBtn" title="Minimize">
+                <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+            </div>
+            <!-- Close Button -->
+            <div class="control-btn close" id="closeBtn" title="Hide to Tray">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (window.api.platform === 'darwin') {
+            document.getElementById('hideBtn').style.display = 'none';
+            document.getElementById('closeBtn').style.display = 'none';
+            document.querySelector('.titlebar-title').style.paddingLeft = '70px';
+        }
+
+        // Bulletproof hover state management to fix Chromium stuck hover bugs
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => btn.classList.add('is-hovered'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('is-hovered'));
+            btn.addEventListener('click', () => btn.classList.remove('is-hovered'));
+        });
+
+        // Strip all hover states when window loses focus (e.g. Alt+Space hide)
+        window.addEventListener('blur', () => {
+            document.querySelectorAll('.control-btn.is-hovered').forEach(btn => {
+                btn.classList.remove('is-hovered');
+            });
+        });
+
+        window.api.onSettingsUpdate((settings) => {
+            const pinBtn = document.getElementById('pinBtn');
+            if (settings.alwaysOnTop) {
+                pinBtn.classList.add('active');
+            } else {
+                pinBtn.classList.remove('active');
+            }
+        });
+
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.api.goBack();
+        });
+
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            window.api.refresh();
+        });
+
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            window.api.toggleSettings();
+        });
+
+        document.getElementById('pinBtn').addEventListener('click', () => {
+            window.api.togglePin();
+        });
+
+        document.getElementById('hideBtn').addEventListener('click', () => {
+            window.api.hideWindow();
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            window.api.closeApp();
+        });
+
+        // Updater Logic
+        if (window.api.onUpdateAvailable) {
+            let currentUpdateVersion = '';
+            let pendingUpdate = false;
+
+            if (window.api.onWindowShown) {
+                window.api.onWindowShown(() => {
+                    if (pendingUpdate) {
+                        document.getElementById('update-overlay').classList.add('show');
+                        pendingUpdate = false;
+                    }
+                });
+            }
+
+            window.api.onUpdateAvailable((version) => {
+                currentUpdateVersion = version;
+                document.getElementById('updateVersionSpan').innerText = version;
+                pendingUpdate = true;
+                
+                // Reset buttons in case a newer update overwrote a previously pending one
+                const btn = document.getElementById('installUpdateBtn');
+                btn.innerText = "Download & Install";
+                btn.disabled = false;
+                btn.onclick = () => {
+                    btn.innerText = "Downloading...";
+                    btn.disabled = true;
+                    window.api.dismissUpdate(currentUpdateVersion); // Mark as handled permanently
+                    window.api.downloadUpdate();
+                };
+            });
+            
+            window.api.onUpdateDownloaded(() => {
+                const btn = document.getElementById('installUpdateBtn');
+                btn.innerText = "Restart to Install";
+                btn.disabled = false;
+                btn.onclick = () => window.api.installUpdate();
+            });
+
+            document.getElementById('dismissUpdateBtn').onclick = () => {
+                document.getElementById('update-overlay').classList.remove('show');
+                window.api.dismissUpdate(currentUpdateVersion);
+            };
+        }
+    </script>
+</body>
+</html>

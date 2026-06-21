@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="icon.png">
 </head>
 <body>
     <div class="blob blob-1"></div>
@@ -15,11 +16,9 @@
     
     <div class="container">
         <header>
-            <div class="logo-container">
-                <img src="icon.png" alt="Gemini Desktop Logo" width="56" height="56" style="border-radius: 12px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
-            </div>
+
             <h1>Gemini Desktop</h1>
-            <p class="subtitle">Experience Google Gemini outside the browser. Native, fast, and packed with power user features.</p>
+            <p class="subtitle">Experience Google Gemini Desktop outside the browser. Native, fast, and packed with power user features.</p>
             <div class="security-badge">
                 🔒 Direct, secure webview. No injected scripts. Your Google session stays strictly local.
             </div>
@@ -28,14 +27,12 @@
                 <a href="downloads.html" class="btn primary">Download Gemini Desktop</a>
                 <a href="https://ko-fi.com/omux25" target="_blank" class="btn secondary">☕ Support the Project</a>
             </div>
-            
-            <img src="mockup.png" class="mockup-img" alt="Gemini Desktop App Interface" style="display: none;" id="mockupImg">
         </header>
 
         <section class="features">
             <div class="feature-card">
                 <h3>Global Hotkey</h3>
-                <p>Instantly summon Gemini from any app using <code>Alt + Space</code> (or <code>Cmd + Opt + Space</code> on Mac). It auto-focuses the prompt so you can start typing immediately.</p>
+                <p>Instantly summon Gemini Desktop from any app using <code>Alt + Space</code> (or <code>Cmd + Opt + Space</code> on Mac). It auto-focuses the prompt so you can start typing immediately.</p>
             </div>
             <div class="feature-card">
                 <h3>Smart Memory <span style="font-size: 0.6em; background: rgba(0,122,255,0.2); color: #4da3ff; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 6px;">Optimized</span></h3>
@@ -44,6 +41,52 @@
             <div class="feature-card">
                 <h3>Native Voice</h3>
                 <p>Full integration with your OS microphone permissions for seamless Voice-to-Text dictation.</p>
+            </div>
+        </section>
+        
+        <section class="section-divider">
+            <h2>Beautiful Interface</h2>
+            <p class="subtitle" style="margin-bottom: 30px;">A clean, native wrapper that perfectly integrates with your OS.</p>
+            <div class="mockup-grid">
+                <div class="mockup-item">
+                    <img src="chat_window.png" class="mockup-img" alt="Gemini Chat Interface">
+                    <p class="mockup-caption">Clean Chat Interface</p>
+                </div>
+                <div class="mockup-item">
+                    <img src="settings_window.png" class="mockup-img" alt="Gemini Settings Interface">
+                    <p class="mockup-caption">Native Settings Window</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-divider">
+            <h2>More Power User Features</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>Always on Top</h3>
+                    <p>Pin the Gemini Desktop window above all other applications for constant, uninterrupted access while you work.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>System Tray Integration</h3>
+                    <p>Runs quietly in the background. Click the tray icon to quickly access settings or summon the app.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Cross-Platform</h3>
+                    <p>Native, highly optimized builds available for Windows (.exe), macOS (.dmg), and Linux (.AppImage, .deb).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-divider">
+            <h2>Quick Installation</h2>
+            <div class="install-card">
+                <p style="color: #cbd5e1; margin-bottom: 16px; font-size: 1.05rem;">Download the latest release for your platform or use a package manager.</p>
+                <div class="code-box">
+                    <code>winget install Omux25.GeminiDesktop</code>
+                </div>
+                <div style="margin-top: 30px;">
+                    <a href="downloads.html" class="btn primary">View All Downloads</a>
+                </div>
             </div>
         </section>
         
@@ -62,12 +105,6 @@
                 const link = document.getElementById('githubLink');
                 link.innerHTML = `<i class="fa-brands fa-github"></i> ${data.tag_name} • View Source on GitHub`;
             }).catch(e => console.error(e));
-
-        // Check if mockup exists, if so display it
-        const mockup = document.getElementById('mockupImg');
-        const img = new Image();
-        img.onload = () => mockup.style.display = 'block';
-        img.src = 'mockup.png';
 
         // Simple subtle animation logic to make the blobs follow the mouse slightly
         document.addEventListener('mousemove', (e) => {
