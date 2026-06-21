@@ -296,6 +296,7 @@
             if (window.api.onWindowShown) {
                 window.api.onWindowShown(() => {
                     if (pendingUpdate) {
+                        window.api.setOverlayActive(true);
                         document.getElementById('update-overlay').classList.add('show');
                         pendingUpdate = false;
                     }
@@ -314,6 +315,7 @@
                 btn.onclick = () => {
                     btn.innerText = "Downloading...";
                     btn.disabled = true;
+                    window.api.setOverlayActive(false);
                     window.api.dismissUpdate(currentUpdateVersion); // Mark as handled permanently
                     window.api.downloadUpdate();
                 };
@@ -328,6 +330,7 @@
 
             document.getElementById('dismissUpdateBtn').onclick = () => {
                 document.getElementById('update-overlay').classList.remove('show');
+                window.api.setOverlayActive(false);
                 window.api.dismissUpdate(currentUpdateVersion);
             };
         }

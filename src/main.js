@@ -15,6 +15,7 @@ let mainWindow;
 let geminiView;
 let settingsView;
 let isSettingsOpen = false;
+let isOverlayActive = false;
 let tray = null;
 
 const TITLE_BAR_HEIGHT = 38;
@@ -166,10 +167,14 @@ function createWindow() {
       height: bounds.height - TITLE_BAR_HEIGHT 
     };
     if (geminiView) {
-        geminiView.setBounds(viewBounds);
+        if (isOverlayActive) {
+            geminiView.setBounds({ x: -9999, y: -9999, width: 0, height: 0 });
+        } else {
+            geminiView.setBounds(viewBounds);
+        }
     }
     if (settingsView) {
-        if (isSettingsOpen) {
+        if (isSettingsOpen && !isOverlayActive) {
             settingsView.setBounds(viewBounds);
         } else {
             settingsView.setBounds({ x: -9999, y: -9999, width: 0, height: 0 });
@@ -253,19 +258,8 @@ function toggleSettings() {
     settingsView.webContents.send('settings-update', { ...currentSettings, appVersion: app.getVersion() });
   }
   
-  // Update bounds based on the new state
-  const bounds = mainWindow.getContentBounds();
-  const viewBounds = { 
-    x: 0, 
-    y: TITLE_BAR_HEIGHT, 
-    width: bounds.width, 
-    height: bounds.height - TITLE_BAR_HEIGHT 
-  };
-  
-  if (isSettingsOpen) {
-      settingsView.setBounds(viewBounds);
-  } else {
-      settingsView.setBounds({ x: -9999, y: -9999, width: 0, height: 0 });
+  if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.emit('resize'); // Trigger bounds update natively
   }
 }
 
@@ -362,9 +356,6 @@ app.whenReady().then(() => {
   // Auto Updater Logic
   autoUpdater.autoDownload = false;
   autoUpdater.checkForUpdates();
-  setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, 1000 * 60 * 60 * 1); // Check silently every 1 hour
   
   autoUpdater.on('update-available', (info) => {
     const version = info.version;
@@ -441,6 +432,13 @@ ipcMain.on('check-for-updates-manual', () => {
 ipcMain.on('dismiss-update', (event, version) => {
   currentSettings.dismissedUpdateVersion = version;
   saveSettings(currentSettings);
+});
+
+ipcMain.on('set-overlay-active', (event, active) => {
+  isOverlayActive = active;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.emit('resize');
+  }
 });
 
 ipcMain.handle('get-settings', () => {

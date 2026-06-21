@@ -15,5 +15,6 @@ contextBridge.exposeInMainWorld('api', {
     onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
     installUpdate: () => ipcRenderer.send('install-update'),
     downloadUpdate: () => ipcRenderer.send('download-update'),
-    dismissUpdate: (version) => ipcRenderer.send('dismiss-update', version)
+    dismissUpdate: (version) => ipcRenderer.send('dismiss-update', version),
+    setOverlayActive: (active) => ipcRenderer.send('set-overlay-active', active)
 });
