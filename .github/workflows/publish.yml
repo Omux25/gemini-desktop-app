@@ -43,19 +43,5 @@ jobs:
             fi
           done
           
-          git log -1 --pretty=%B > release_notes.md
-          echo "" >> release_notes.md
-          echo "### 📥 Which file should I download?" >> release_notes.md
-          echo "* **Windows:** Download \`Gemini-Desktop-Setup-$VERSION.exe\` for a standard install, or \`Portable.exe\` if you want to run it without installing." >> release_notes.md
-          echo "* **Mac (Apple Silicon):** Download \`Gemini-Desktop-$VERSION-arm64.dmg\`." >> release_notes.md
-          echo "* **Ubuntu/Debian:** Download \`gemini-desktop_$VERSION_amd64.deb\` to install via your package manager." >> release_notes.md
-          echo "* **Other Linux Distros:** Download the \`.AppImage\` to run it as a portable app." >> release_notes.md
-          
-          NOTES=$(cat release_notes.md)
-          jq -n \
-            --arg name "Gemini Desktop v$VERSION" \
-            --arg body "$NOTES" \
-            --argjson draft false \
-            '{name: $name, body: $body, draft: $draft}' > patch.json
-            
+          jq -n '{"draft": false}' > patch.json
           gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID --input patch.json
