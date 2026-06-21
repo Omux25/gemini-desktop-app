@@ -134,7 +134,7 @@ function createWindow() {
     show: false
   });
 
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Create WebContentsView for the external website
   geminiView = new WebContentsView({
@@ -154,7 +154,7 @@ function createWindow() {
     }
   });
   settingsView.setBackgroundColor('#00000000');
-  settingsView.webContents.loadFile('settings.html');
+  settingsView.webContents.loadFile(path.join(__dirname, 'settings.html'));
   mainWindow.contentView.addChildView(settingsView);
   
   function updateViewBounds() {
@@ -196,7 +196,7 @@ function createWindow() {
   geminiView.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
     // Ignore aborted requests (-3) which happen normally during some navigations
     if (errorCode !== -3 && validatedURL.includes('google.com')) {
-      geminiView.webContents.loadFile('offline.html');
+      geminiView.webContents.loadFile(path.join(__dirname, 'offline.html'));
     }
   });
 
