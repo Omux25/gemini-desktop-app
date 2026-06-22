@@ -249,6 +249,8 @@ function createWindow() {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
+      if (global.gc) global.gc();
+      if (geminiView) geminiView.webContents.executeJavaScript('if (window.gc) window.gc();').catch(()=>{});
     } else {
       const bounds = mainWindow.getBounds();
       currentSettings.windowX = bounds.x;
@@ -295,6 +297,8 @@ function toggleWindow() {
 
     if (shouldHide) {
       mainWindow.hide();
+      if (global.gc) global.gc();
+      if (geminiView) geminiView.webContents.executeJavaScript('if (window.gc) window.gc();').catch(()=>{});
       return;
     }
   }
