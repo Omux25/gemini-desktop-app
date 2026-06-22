@@ -342,7 +342,6 @@ function toggleWindow() {
             mainWindow.emit('resize');
         }
     }, 50);
-  }
 }
 
 function registerHotkey(hotkey) {
