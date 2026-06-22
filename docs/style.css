@@ -31,13 +31,17 @@
     background: rgba(255, 255, 255, 0.25);
 }
 
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
     background-color: var(--bg-color);
     color: var(--text-primary);
     line-height: 1.5;
     min-height: 100vh;
-    overflow-x: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -360,7 +364,9 @@ footer {
     .cta-container { flex-direction: column; width: 100%; gap: 12px; }
     .btn { width: 100%; text-align: center; }
     .container { padding: 30px 20px; border-radius: 24px; width: 95%; margin: 20px auto; }
-    .blob { filter: blur(60px); opacity: 0.5; transform: scale(0.8); }
+    .blob { filter: blur(60px); opacity: 0.5; transform: scale(0.6); }
+    .install-card { padding: 25px 20px; }
+    .code-box { font-size: 0.9rem; word-break: break-all; padding: 12px 16px; }
 }
 
 /* 1440p Scaling */
