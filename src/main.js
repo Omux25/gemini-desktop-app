@@ -249,10 +249,6 @@ function createWindow() {
     if (!app.isQuiting) {
       event.preventDefault();
       mainWindow.hide();
-      if (geminiView) {
-        geminiView.webContents.setBackgroundThrottling(true);
-      }
-      if (global.gc) global.gc();
     } else {
       const bounds = mainWindow.getBounds();
       currentSettings.windowX = bounds.x;
@@ -299,16 +295,8 @@ function toggleWindow() {
 
     if (shouldHide) {
       mainWindow.hide();
-      if (geminiView) {
-        geminiView.webContents.setBackgroundThrottling(true);
-      }
-      if (global.gc) global.gc();
       return;
     }
-  }
-
-  if (geminiView) {
-    geminiView.webContents.setBackgroundThrottling(false);
   }
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
