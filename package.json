@@ -1,7 +1,7 @@
 {
   "name": "gemini-desktop",
   "productName": "Gemini Desktop",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A native cross-platform desktop app for Google Gemini",
   "main": "src/main.js",
   "scripts": {
