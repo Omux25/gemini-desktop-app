@@ -275,18 +275,41 @@ function toggleSettings() {
 }
 
 function toggleWindow() {
-  if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
-    mainWindow.hide();
-    if (geminiView) {
-      geminiView.webContents.setBackgroundThrottling(true);
+  if (mainWindow.isMinimized()) mainWindow.restore();
+
+  if (mainWindow.isVisible()) {
+    let shouldHide = false;
+
+    if (mainWindow.isFocused() || currentSettings.alwaysOnTop) {
+      // Always hide if it already has focus or if it's pinned (never obscured)
+      shouldHide = true;
+    } else {
+      // Visible, unfocused, and not pinned.
+      // We check if the user is interacting with a different monitor.
+      const bounds = mainWindow.getBounds();
+      const geminiDisplay = screen.getDisplayMatching(bounds);
+      const cursorPoint = screen.getCursorScreenPoint();
+      const activeDisplay = screen.getDisplayNearestPoint(cursorPoint);
+
+      if (geminiDisplay.id !== activeDisplay.id) {
+        // User is active on another screen. Gemini is likely fully visible on its own screen.
+        shouldHide = true;
+      }
     }
-    if (global.gc) global.gc();
-  } else {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    
-    if (geminiView) {
-      geminiView.webContents.setBackgroundThrottling(false);
+
+    if (shouldHide) {
+      mainWindow.hide();
+      if (geminiView) {
+        geminiView.webContents.setBackgroundThrottling(true);
+      }
+      if (global.gc) global.gc();
+      return;
     }
+  }
+
+  if (geminiView) {
+    geminiView.webContents.setBackgroundThrottling(false);
+  }
     
     // Windows force-focus hack: temporarily set to always on top to force it to the front
     mainWindow.setAlwaysOnTop(true, process.platform === 'win32' ? 'pop-up-menu' : 'floating');
