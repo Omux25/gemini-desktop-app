@@ -275,7 +275,7 @@ function toggleSettings() {
 }
 
 function toggleWindow() {
-  if (mainWindow.isVisible() && !mainWindow.isMinimized() && (mainWindow.isFocused() || currentSettings.alwaysOnTop)) {
+  if (mainWindow.isVisible() && !mainWindow.isMinimized()) {
     mainWindow.hide();
     if (geminiView) {
       geminiView.webContents.setBackgroundThrottling(true);
