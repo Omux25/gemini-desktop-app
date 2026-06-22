@@ -92,6 +92,9 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
           })();
         `).catch(()=>{});
       }
+      setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) mainWindow.emit('resize');
+      }, 50);
     }
   }
 });
@@ -224,11 +227,19 @@ function createWindow() {
 
   // Windows Bug Fix: Frameless windows with WebContentsView lose WS_EX_TOPMOST 
   // when the child view is clicked. We must force Win32 to re-apply the style.
+  let isEnforcing = false;
   const enforceTopmost = () => {
-    if (currentSettings.alwaysOnTop && mainWindow) {
+    if (currentSettings.alwaysOnTop && mainWindow && !isEnforcing) {
+      isEnforcing = true;
       mainWindow.setAlwaysOnTop(false);
       const topmostLevel = process.platform === 'win32' ? 'pop-up-menu' : 'floating';
       mainWindow.setAlwaysOnTop(true, topmostLevel);
+      setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.emit('resize');
+        }
+        isEnforcing = false;
+      }, 50);
     }
   };
   mainWindow.on('focus', enforceTopmost);
@@ -311,6 +322,15 @@ function toggleWindow() {
       const topmostLevel = process.platform === 'win32' ? 'pop-up-menu' : 'floating';
       mainWindow.setAlwaysOnTop(true, topmostLevel);
     }
+    
+    // Forcefully recalculate and push WebContentsView bounds after surfacing the window.
+    // On Windows, re-parenting or toggling AlwaysOnTop silently breaks the child view bounds
+    // causing it to render a completely black screen.
+    setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.emit('resize');
+        }
+    }, 50);
   }
 }
 
